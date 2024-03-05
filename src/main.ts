@@ -3,6 +3,8 @@ import router from "./router";
 import { setupStore } from "@/store";
 import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
+// 如果您正在使用CDN引入，请删除下面一行。
+import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 import { getServerConfig } from "./config";
 import { createApp, Directive } from "vue";
 import { MotionPlugin } from "@vueuse/motion";
@@ -32,7 +34,9 @@ import * as directives from "@/directives";
 Object.keys(directives).forEach(key => {
   app.directive(key, (directives as { [key: string]: Directive })[key]);
 });
-
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component);
+}
 // 全局注册`@iconify/vue`图标库
 import {
   IconifyIconOffline,

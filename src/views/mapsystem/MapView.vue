@@ -116,27 +116,6 @@ export default {
       });
       // Add other events here as necessary
     },
-    handleDataLoad(dataType) {
-      // Use the dataType to determine which data to load
-      // and then call a method on the MapView component
-      if (dataType === "optical") {
-        this.isOpticalLayerAdded ^= 1;
-        this.addRasWMSLayer();
-        // this.isOpticalLayerAdded = true;
-      } else if (dataType === "sar") {
-        this.isSarLayerAdded ^= 1;
-        this.addSarWMSLayer();
-      } else if (dataType === "vector") {
-        this.isVectorLayerAdded ^= 1;
-        this.addVecWFSLayer();
-      } else if (dataType === "dem") {
-        this.isDemLayerAdded ^= 1;
-        this.addDemWMSLayer();
-      } else if (dataType === "insar") {
-        this.isInSARLayerAdded ^= 1;
-        this.addInSARLayer();
-      }
-    },
     // 假设layerName是从Flask后端接收到的，表示新上传并需要加载的图层名称
     // 这个函数可以根据实际情况调整，以适应不同的触发条件
     addDynamicWMSLayer(workspace, layerName) {
@@ -160,6 +139,25 @@ export default {
       //   name: layerName,
       //   layer: newLayer
       // });
+    },
+    handleDataLoad(dataType) {
+      if (dataType === "optical") {
+        this.isOpticalLayerAdded ^= 1;
+        this.addRasWMSLayer();
+        // this.isOpticalLayerAdded = true;
+      } else if (dataType === "sar") {
+        this.isSarLayerAdded ^= 1;
+        this.addSarWMSLayer();
+      } else if (dataType === "vector") {
+        this.isVectorLayerAdded ^= 1;
+        this.addVecWFSLayer();
+      } else if (dataType === "dem") {
+        this.isDemLayerAdded ^= 1;
+        this.addDemWMSLayer();
+      } else if (dataType === "insar") {
+        this.isInSARLayerAdded ^= 1;
+        this.addInSARLayer();
+      }
     },
     // 加载光学影像数据
     addRasWMSLayer() {
@@ -221,37 +219,6 @@ export default {
     addVecWFSLayer() {
       if (this.isVectorLayerAdded) {
         // 川藏研究区 GeoServer WFS 服务的 URL
-        const cz_railway_area =
-          "http://localhost:8080/geoserver/chuanzang/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=chuanzang%3Acz_railway_area&maxFeatures=50&outputFormat=application%2Fjson";
-        fetch(cz_railway_area)
-          .then(response => response.json())
-          .then(data => {
-            // 使用 GeoJSON 数据创建一个图层
-            const geoJsonLayer = L.geoJSON(data, {
-              // 这里可以根据需要定义样式
-              style: feature => ({
-                color: "#000000", // 设置边框为黑色
-                weight: 2, // 默认线宽
-                fillColor: feature.properties.fillColor || "#000000", // 修改为黑色
-                fillOpacity: 0 // 设置填充透明
-              }),
-              onEachFeature: function () {
-                // 这里可以添加鼠标点击等事件处理程序
-              }
-            });
-            // 将图层添加到图层控制器中
-            this.cz_railway_area = geoJsonLayer;
-            geoJsonLayer.addTo(this.map);
-            this.layerControl.addOverlay(geoJsonLayer, "川藏线研究区");
-            this.layersWithAttributes.push({
-              name: "川藏线研究区",
-              attributes: data.features.map(f => f.properties)
-            });
-          })
-          .catch(error => {
-            console.error("Error fetching the WFS data: ", error);
-          });
-        // 川藏线 GeoServer WFS 服务的 URL
         const railway =
           "http://localhost:8080/geoserver/chuanzang/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=chuanzang%3Arailway&maxFeatures=50&outputFormat=application%2Fjson";
         fetch(railway)
@@ -773,9 +740,8 @@ export default {
 <style scoped>
 .geo-system {
   position: relative;
-  height: 100vh;
+  height: 92.5vh;
 }
-
 .map-container {
   height: calc(100%);
   /* Adjust height for status bar */
@@ -806,14 +772,12 @@ export default {
   text-align: center;
   /* Aligns text to the left */
 }
-
 /* Fix for the layer labels if needed */
 ::v-deep .leaflet-control-layers label {
   display: flex;
   align-items: center;
   text-align: left;
 }
-
 /* 使用 ::v-deep 选择器来覆盖 Leaflet 控件的默认样式 */
 ::v-deep .leaflet-top.leaflet-right {
   top: 7vh !important;

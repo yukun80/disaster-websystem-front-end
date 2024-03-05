@@ -81,6 +81,7 @@
     <el-dropdown class="menu-item">
       <el-button type="primary">
         灾害检测<el-icon><arrow-down /></el-icon>
+        <template #dot></template>
       </el-button>
       <template #dropdown>
         <el-dropdown-menu>

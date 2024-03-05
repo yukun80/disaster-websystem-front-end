@@ -158,7 +158,7 @@ const layoutHeader = defineComponent({
       "
       class="app-mask"
       @click="useAppStoreHook().toggleSideBar()"
-    />
+    ></div>
     <Vertical
       v-show="
         !pureSetting.hiddenSideBar &&

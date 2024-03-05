@@ -1,3 +1,4 @@
+// 不可修改
 export default {
   path: "/error",
   redirect: "/error/403",
