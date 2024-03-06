@@ -59,7 +59,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, defineProps } from "vue";
+import { reactive, ref, defineProps, defineEmits } from "vue";
 import { ElMessageBox } from "element-plus";
 import axios from "axios";
 
@@ -67,6 +67,8 @@ import axios from "axios";
 defineProps({
   optical: Boolean
 });
+
+const emit = defineEmits(["load-result"]);
 
 const direction = ref("rtl");
 const radio1 = ref("1");
@@ -129,16 +131,21 @@ const confirmClick = async () => {
   } catch (error) {
     console.error("Detecting error:", error);
   }
-  ElMessageBox.confirm(`是否将检测结果加载到当前地图`)
+  ElMessageBox.confirm(`是否将检测结果加载到当前地图`, {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "info"
+  })
     .then(() => {
-      optical.value = false;
       const res_name = result_name.value; // 结果文件名
       const res_name_no_ext = res_name.split(".")[0];
-      emit("load-result", "predict_result", res_name_no_ext);
+      const workspace = "predict_result";
+      console.log(workspace);
+      emit("load-result", workspace, res_name_no_ext);
       console.log(`${"predict_result"}:${res_name_no_ext}`);
     })
     .catch(() => {
-      // catch error
+      console.log("cancel");
     });
 };
 </script>

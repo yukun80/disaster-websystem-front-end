@@ -25,6 +25,7 @@
 import { onMounted, ref } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import axios from "axios";
 import MenuComponent from "./MenuComponent.vue";
 import Standardized from "./Standardized.vue";
 import OpticalDetection from "./OpticalDetection.vue";
@@ -109,6 +110,7 @@ const isSarWMSAdded = ref(false);
 const isVectorAdded = ref(true);
 const isDemWMSAdded = ref(false);
 const isInsarWMSAdded = ref(false);
+const isPredictResAdded = ref(false);
 
 function handleDataLoad(dataType) {
   if (dataType === "optical") {
@@ -126,6 +128,9 @@ function handleDataLoad(dataType) {
   } else if (dataType === "insar") {
     isInsarWMSAdded.value ^= 1;
     addInSARLayers();
+  } else if (dataType === "predict") {
+    isPredictResAdded.value ^= 1;
+    addPredictResult();
   }
 }
 
@@ -367,6 +372,32 @@ function addVecWFSLayers() {
   }
 }
 
+async function addPredictResult(workspace = "predict_result") {
+  try {
+    console.log("加载完整工作区栅格");
+    const response = await axios.get(`http://localhost:5000/list_layers`, {
+      params: { workspace }
+    });
+
+    const data = response.data; // With axios, response.data directly contains the data
+    console.log(data);
+    // Assuming the backend returns data structure like {layers: ["layer1", "layer2", ...]}
+    if (data.layers && data.layers.length > 0) {
+      console.log("获取到图层名");
+      data.layers.forEach(layerName => {
+        // Directly use layerName from the array
+        console.log(layerName);
+        addDynamicWMSLayer(workspace, layerName); // Pass layerName directly
+      });
+    } else {
+      console.error("No layers found in the workspace:", workspace);
+    }
+  } catch (error) {
+    // Error handling with axios should be in the catch block
+    console.error("Error fetching layers:", error);
+  }
+}
+
 const standardVisible = ref(false);
 
 const multiBandStandardized = () => {
@@ -377,6 +408,18 @@ const optical = ref(false);
 const opticalDetection = () => {
   optical.value = true;
 };
+
+function addDynamicWMSLayer(workspace, layerName) {
+  console.log("栅格数据加载");
+  const fullLayerName = `${workspace}:${layerName}`;
+  const newLayer = L.tileLayer.wms("http://localhost:8080/geoserver/wms", {
+    layers: fullLayerName, // 使用动态获取的工作空间和图层名称
+    format: "image/png",
+    transparent: true,
+    version: "1.3.0"
+  });
+  layerControl.value.addOverlay(newLayer, layerName);
+}
 </script>
 
 <style scoped>

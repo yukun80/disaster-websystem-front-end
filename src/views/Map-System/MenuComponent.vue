@@ -24,6 +24,9 @@
       <el-menu-item index="1-5" @click="addLayerToMap('insar')"
         >InSAR形变结果数据</el-menu-item
       >
+      <el-menu-item index="1-6" @click="addLayerToMap('predict')"
+        >检测结果栅格数据</el-menu-item
+      >
     </el-sub-menu>
     <el-sub-menu index="2">
       <template #title> 计算工具 </template>
