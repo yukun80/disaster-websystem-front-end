@@ -15,9 +15,17 @@
       :layers="layersWithRaster"
       @standard-preprocess="multiBandStandardized"
       @optical-detection="opticalDetection"
+      @insar-detection="insarDetection"
     />
     <Standardized v-model="standardVisible" />
-    <OpticalDetection @load-result="addDynamicWMSLayer" v-model="optical" />
+    <OpticalDetection
+      @load-result="addDynamicWMSLayer"
+      v-model="opticalDetectVisible"
+    />
+    <InsarDetection
+      @load-result="addDynamicWMSLayer"
+      v-model="insarDetectVisible"
+    />
   </div>
 </template>
 
@@ -29,6 +37,7 @@ import axios from "axios";
 import MenuComponent from "./MenuComponent.vue";
 import Standardized from "./Standardized.vue";
 import OpticalDetection from "./OpticalDetection.vue";
+import InsarDetection from "./InsarDetection.vue";
 
 const map = ref(null);
 const layerControl = ref(null); // 图层控制器的引用
@@ -192,6 +201,7 @@ const cz_railway_buffer5 = ref(null);
 const cz_railway_buffer_20 = ref(null);
 const cz_fault = ref(null);
 const cz_reservoir = ref(null);
+const china_river_level3 = ref(null);
 // 加载矢量数据
 function addVecWFSLayers() {
   if (isVectorAdded.value) {
@@ -349,6 +359,38 @@ function addVecWFSLayers() {
       .catch(error => {
         console.error("Error fetching the WFS data: ", error);
       });
+    const china_river_level3_url =
+      "http://localhost:8080/geoserver/chuanzang/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=chuanzang%3AChinaRiver_level3&outputFormat=application%2Fjson";
+    fetch(china_river_level3_url)
+      .then(response => response.json())
+      .then(data => {
+        // 使用 GeoJSON 数据创建一个图层
+        const geoJsonLayer = L.geoJSON(data, {
+          // 这里可以根据需要定义样式
+          style: feature => ({
+            color: "#0000FF", // 设置边框为蓝色
+            weight: 2, // 默认线宽
+            fillColor: feature.properties.fillColor || "#0000FF",
+            fillOpacity: 1 // 设置填充透明度为0.5
+          }),
+          onEachFeature: (feature, layer) => {
+            layer.on("click", e => {
+              createPopup(feature.properties, e.latlng);
+            });
+          }
+        });
+        // 将图层添加到图层控制器中
+        china_river_level3.value = geoJsonLayer;
+        geoJsonLayer.addTo(map.value);
+        layerControl.value.addOverlay(geoJsonLayer, "中国三级以上河流");
+        layersWithAttributes.push({
+          name: "中国河流数据集",
+          attributes: data.features.map(f => f.properties)
+        });
+      })
+      .catch(error => {
+        console.error("Error fetching the WFS data: ", error);
+      });
   } else {
     // 将图层从图层控制器中删除
     // console.log('remove layer');
@@ -357,18 +399,21 @@ function addVecWFSLayers() {
     layerControl.value.removeLayer(cz_railway_buffer_20.value);
     layerControl.value.removeLayer(cz_fault.value);
     layerControl.value.removeLayer(cz_reservoir.value);
+    layerControl.value.removeLayer(china_river_level3.value);
 
     map.value.removeLayer(railway.value);
     map.value.removeLayer(cz_railway_buffer5.value);
     map.value.removeLayer(cz_railway_buffer_20.value);
     map.value.removeLayer(cz_fault.value);
     map.value.removeLayer(cz_reservoir.value);
+    map.value.removeLayer(china_river_level3.value);
 
     railway.value = null;
     cz_railway_buffer5.value = null;
     cz_railway_buffer_20.value = null;
     cz_fault.value = null;
     cz_reservoir.value = null;
+    china_river_level3.value = null;
   }
 }
 
@@ -399,14 +444,18 @@ async function addPredictResult(workspace = "predict_result") {
 }
 
 const standardVisible = ref(false);
-
 const multiBandStandardized = () => {
   standardVisible.value = true;
 };
 
-const optical = ref(false);
+const opticalDetectVisible = ref(false);
 const opticalDetection = () => {
-  optical.value = true;
+  opticalDetectVisible.value = true;
+};
+
+const insarDetectVisible = ref(false);
+const insarDetection = () => {
+  insarDetectVisible.value = true;
 };
 
 function addDynamicWMSLayer(workspace, layerName) {

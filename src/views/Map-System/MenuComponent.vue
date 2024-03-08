@@ -46,7 +46,9 @@
       <el-menu-item index="4-1" @click="OpticalDetection()"
         >光学遥感检测</el-menu-item
       >
-      <el-menu-item index="4-2">InSAR灾害检测</el-menu-item>
+      <el-menu-item index="4-2" @click="InsarDetection()"
+        >InSAR灾害检测</el-menu-item
+      >
       <el-menu-item index="4-3">多源遥感综合检测</el-menu-item>
     </el-sub-menu>
     <el-sub-menu index="5">
@@ -84,6 +86,9 @@ const Standardized = () => {
 };
 const OpticalDetection = () => {
   emit("optical-detection");
+};
+const InsarDetection = () => {
+  emit("insar-detection");
 };
 </script>
 
