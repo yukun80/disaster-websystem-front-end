@@ -49,7 +49,9 @@
       <el-menu-item index="4-2" @click="InsarDetection()"
         >InSAR灾害检测</el-menu-item
       >
-      <el-menu-item index="4-3">多源遥感综合检测</el-menu-item>
+      <el-menu-item index="4-3" @click="MultiDetection()"
+        >多源遥感综合检测</el-menu-item
+      >
     </el-sub-menu>
     <el-sub-menu index="5">
       <template #title> 样本管理 </template>
@@ -89,6 +91,9 @@ const OpticalDetection = () => {
 };
 const InsarDetection = () => {
   emit("insar-detection");
+};
+const MultiDetection = () => {
+  emit("multi-detection");
 };
 </script>
 

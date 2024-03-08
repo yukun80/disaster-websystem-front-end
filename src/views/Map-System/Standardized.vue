@@ -1,5 +1,9 @@
 <template>
-  <el-drawer :model-value="standardVisible" :direction="direction">
+  <el-drawer
+    :model-value="standardVisible"
+    :direction="direction"
+    :size="'25%'"
+  >
     <template #header>
       <h3>多源遥感数据标准化预处理</h3>
     </template>

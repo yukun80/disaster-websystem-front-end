@@ -1,5 +1,9 @@
 <template>
-  <el-drawer :model-value="insarDetectVisible" :direction="direction">
+  <el-drawer
+    :model-value="insarDetectVisible"
+    :direction="direction"
+    :size="'25%'"
+  >
     <template #header>
       <h3>InSAR滑坡检测</h3>
     </template>
@@ -25,7 +29,7 @@
             >InSAR形变特征融合检测</el-radio
           >
         </el-form-item>
-        <el-form-item label="滑坡检测结果保存位置">
+        <el-form-item label="检测结果保存位置">
           <el-select
             v-model="form.outputPath2.path"
             placeholder="请选择保存位置"

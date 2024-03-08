@@ -1,15 +1,15 @@
 <template>
   <el-drawer
-    :model-value="opticalDetectVisible"
+    :model-value="multiDetectVisible"
     :direction="direction"
     :size="'25%'"
   >
     <template #header>
-      <h3>光学遥感检测</h3>
+      <h3>多源遥感综合检测</h3>
     </template>
     <template #default>
       <el-form :model="form" label-width="30%" label-position="left">
-        <el-form-item label="标准化影像切片数据集">
+        <el-form-item label="光学遥感检测结果">
           <el-select
             v-model="form.outputPath1.path"
             placeholder="请选择数据集路径"
@@ -25,7 +25,9 @@
           </el-select>
         </el-form-item>
         <el-form-item label="滑坡检测模型选择">
-          <el-radio v-model="radio1" size="large">多波段特征融合检测</el-radio>
+          <el-radio v-model="radio1" size="large"
+            >InSAR形变特征融合检测</el-radio
+          >
         </el-form-item>
         <el-form-item label="检测结果保存位置">
           <el-select
@@ -67,9 +69,8 @@ import { reactive, ref, defineProps, defineEmits } from "vue";
 import { ElMessageBox } from "element-plus";
 import axios from "axios";
 
-// 直接调用 defineProps 接收父组件传递的参数
 defineProps({
-  optical: Boolean
+  insarDetection: Boolean
 });
 
 const emit = defineEmits(["load-result"]);
@@ -100,6 +101,7 @@ const fetchOutputPaths = async (outIndex, dir) => {
     alert("加载路径失败，请稍后再试");
   }
 };
+
 const onOutputPathChange = async outIndex => {
   const selectedPath =
     form[outIndex === 1 ? "outputPath1" : "outputPath2"].path;
@@ -125,7 +127,7 @@ const confirmClick = async () => {
   console.log(res_folder);
   console.log(result_name.value);
   try {
-    const response = await axios.post(`http://localhost:5000/predict_images`, {
+    const response = await axios.post(`http://localhost:5000/predict_insar`, {
       tiles_folder,
       res_folder,
       res_name

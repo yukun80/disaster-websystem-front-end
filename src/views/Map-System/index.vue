@@ -16,6 +16,7 @@
       @standard-preprocess="multiBandStandardized"
       @optical-detection="opticalDetection"
       @insar-detection="insarDetection"
+      @multi-detection="multiDetection"
     />
     <Standardized v-model="standardVisible" />
     <OpticalDetection
@@ -25,6 +26,10 @@
     <InsarDetection
       @load-result="addDynamicWMSLayer"
       v-model="insarDetectVisible"
+    />
+    <MultiDetection
+      @load-result="addDynamicWMSLayer"
+      v-model="multiDetectVisible"
     />
   </div>
 </template>
@@ -456,6 +461,11 @@ const opticalDetection = () => {
 const insarDetectVisible = ref(false);
 const insarDetection = () => {
   insarDetectVisible.value = true;
+};
+
+const multiDetectVisible = ref(false);
+const multiDetection = () => {
+  multiDetectVisible.value = true;
 };
 
 function addDynamicWMSLayer(workspace, layerName) {
