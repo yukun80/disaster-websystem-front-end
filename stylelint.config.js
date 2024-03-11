@@ -80,5 +80,5 @@ module.exports = {
       { severity: "warning" }
     ]
   },
-  ignoreFiles: ["**/*.js", "**/*.ts", "**/*.jsx", "**/*.tsx"]
+  ignoreFiles: ["**/*.js", "**/*.ts", "**/*.jsx", "**/*.tsx", "**/*.vue"]
 };
