@@ -68,11 +68,6 @@ import { reactive, ref } from "vue";
 import { ElMessageBox } from "element-plus";
 import axios from "axios";
 
-// 直接调用 defineProps 接收父组件传递的参数
-// defineProps({
-//   optical: Boolean
-// });
-
 const emit = defineEmits(["load-result"]);
 
 const direction = ref("rtl");

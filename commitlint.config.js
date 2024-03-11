@@ -4,7 +4,7 @@ module.exports = {
   rules: {
     "body-leading-blank": [2, "always"],
     "footer-leading-blank": [1, "always"],
-    "header-max-length": [2, "always", 130],
+    "header-max-length": [0],
     "subject-empty": [0], // 禁用此规则
     "type-empty": [0], // 禁用此规则
     "type-enum": [

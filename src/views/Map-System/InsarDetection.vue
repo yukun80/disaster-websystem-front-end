@@ -70,10 +70,6 @@ import { reactive, ref } from "vue";
 import { ElMessageBox } from "element-plus";
 import axios from "axios";
 
-// defineProps({
-//   insarDetection: Boolean
-// });
-
 const emit = defineEmits(["load-result"]);
 
 const direction = ref("rtl");
