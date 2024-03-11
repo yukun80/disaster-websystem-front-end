@@ -43,6 +43,7 @@ import MenuComponent from "./MenuComponent.vue";
 import Standardized from "./Standardized.vue";
 import OpticalDetection from "./OpticalDetection.vue";
 import InsarDetection from "./InsarDetection.vue";
+import MultiDetection from "./MultiDetection.vue";
 
 const map = ref(null);
 const layerControl = ref(null); // 图层控制器的引用
@@ -486,40 +487,46 @@ function addDynamicWMSLayer(workspace, layerName) {
   position: relative;
   height: 94.6vh;
 }
+
 .map-container {
   height: calc(100%);
 }
+
 .el-menu-demo {
   position: absolute;
   top: 2vh;
-  left: 63vh;
   right: 50vh;
-  height: 40px;
+  left: 63vh;
   z-index: 500;
+  height: 40px;
 }
+
 .status-bar {
   position: absolute; /* 绝对定位相对于最近的相对定位祖先（.map-container） */
+  right: 0;
   bottom: 0; /* 对齐到底部 */
   left: 0;
-  right: 0;
-  height: 3vh; /* 或根据需要调整高度 */
-  background-color: rgba(0, 0, 0, 0.7); /* 半透明黑色背景 */
-  backdrop-filter: blur(5px);
-  color: white;
-  padding: 2px 2px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  font-size: 15px;
   z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 3vh; /* 或根据需要调整高度 */
+  padding: 2px;
+  font-size: 15px;
+  color: white;
+  background-color: rgb(0 0 0 / 70%); /* 半透明黑色背景 */
+  backdrop-filter: blur(5px);
 }
+
 /* Scoped styles with deep selector to target layer control items */
-::v-deep .leaflet-control-layers-selector {
+:deep(.leaflet-control-layers-selector) {
   text-align: center;
+
   /* Aligns text to the left */
 }
+
 /* Fix for the layer labels if needed */
-::v-deep .leaflet-control-layers label {
+:deep(.leaflet-control-layers label) {
   display: flex;
   align-items: center;
   text-align: left;

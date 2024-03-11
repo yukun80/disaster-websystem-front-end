@@ -3,6 +3,7 @@
     :model-value="insarDetectVisible"
     :direction="direction"
     :size="'25%'"
+    style="color: #000; background-color: #f0f2f5"
   >
     <template #header>
       <h3>InSAR滑坡检测</h3>
@@ -65,13 +66,13 @@
 </template>
 
 <script setup>
-import { reactive, ref, defineProps, defineEmits } from "vue";
+import { reactive, ref } from "vue";
 import { ElMessageBox } from "element-plus";
 import axios from "axios";
 
-defineProps({
-  insarDetection: Boolean
-});
+// defineProps({
+//   insarDetection: Boolean
+// });
 
 const emit = defineEmits(["load-result"]);
 
@@ -155,5 +156,3 @@ const confirmClick = async () => {
     });
 };
 </script>
-
-<style lang="scss" scoped></style>

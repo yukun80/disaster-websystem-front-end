@@ -3,6 +3,7 @@
     :model-value="standardVisible"
     :direction="direction"
     :size="'25%'"
+    style="color: #000; background-color: #f0f2f5"
   >
     <template #header>
       <h3>多源遥感数据标准化预处理</h3>
@@ -64,13 +65,13 @@
 </template>
 
 <script setup>
-import { reactive, ref, defineProps } from "vue";
+import { reactive, ref } from "vue";
 import axios from "axios";
 
 // 直接调用 defineProps 接收父组件传递的参数
-defineProps({
-  standardVisible: Boolean
-});
+// defineProps({
+//   standardVisible: Boolean
+// });
 
 const direction = ref("rtl");
 const form = reactive({
@@ -80,10 +81,12 @@ const form = reactive({
   outputFullPath1: "/default",
   dataCheckStatus: null
 });
+
 const addInputPath = index => {
   form.inputPaths.push({ path: "", paths: [] }); // 为新路径添加空选项列表
   fetchPaths(index + 1); // 为新添加的路径获取选项列表
 };
+
 const fetchPaths = async (index, dir = "/default") => {
   form.inputFullPath[index] = dir; // 保存当前路径
   try {
@@ -153,5 +156,3 @@ const confirmClick = async () => {
   }
 };
 </script>
-
-<style lang="scss" scoped></style>

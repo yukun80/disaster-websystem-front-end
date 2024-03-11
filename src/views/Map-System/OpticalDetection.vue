@@ -3,13 +3,14 @@
     :model-value="opticalDetectVisible"
     :direction="direction"
     :size="'25%'"
+    style="color: #000; background-color: #f0f2f5"
   >
     <template #header>
       <h3>光学遥感检测</h3>
     </template>
     <template #default>
       <el-form :model="form" label-width="30%" label-position="left">
-        <el-form-item label="标准化影像切片数据集">
+        <el-form-item label="标准化遥感数据集">
           <el-select
             v-model="form.outputPath1.path"
             placeholder="请选择数据集路径"
@@ -63,14 +64,14 @@
 </template>
 
 <script setup>
-import { reactive, ref, defineProps, defineEmits } from "vue";
+import { reactive, ref } from "vue";
 import { ElMessageBox } from "element-plus";
 import axios from "axios";
 
 // 直接调用 defineProps 接收父组件传递的参数
-defineProps({
-  optical: Boolean
-});
+// defineProps({
+//   optical: Boolean
+// });
 
 const emit = defineEmits(["load-result"]);
 
@@ -153,5 +154,3 @@ const confirmClick = async () => {
     });
 };
 </script>
-
-<style lang="scss" scoped></style>
