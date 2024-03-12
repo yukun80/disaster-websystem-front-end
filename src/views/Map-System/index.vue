@@ -16,6 +16,7 @@
       @standard-preprocess="multiBandStandardized"
       @optical-detection="opticalDetection"
       @insar-detection="insarDetection"
+      @susceptible-detection="susceptibleDetection"
       @multi-detection="multiDetection"
     />
     <Standardized v-model="standardVisible" />
@@ -221,7 +222,7 @@ function addVecWFSLayers() {
           // Apply a static style to the railway line
           style: {
             color: "#000000", // 黑色
-            weight: 4, // 与白色底层相同的宽度
+            weight: 6, // 与白色底层相同的宽度
             ineCap: "square", // 方形线帽
             opacity: 1 // 不透明
           }
@@ -229,8 +230,8 @@ function addVecWFSLayers() {
         const whiteLayer = L.geoJSON(data, {
           style: {
             color: "#FFFFFF", // 白色
-            weight: 3, // 与铁轨线相同的宽度
-            dashArray: "5, 5", // 虚线模式
+            weight: 5, // 与铁轨线相同的宽度
+            dashArray: "10, 10", // 虚线模式
             lineCap: "square", // 方形线帽
             opacity: 1 // 不透明
           }
@@ -261,11 +262,11 @@ function addVecWFSLayers() {
         const geoJsonLayer = L.geoJSON(data, {
           // 这里可以根据需要定义样式
           style: feature => ({
-            color: "#FF0000", // 设置边框为红色
-            weight: 2, // 默认线宽
+            color: "#FF4500", // 设置边框为橙红色
+            weight: 4, // 默认线宽
             fillColor: feature.properties.fillColor || "#000000",
             fillOpacity: 0, // 设置填充透明
-            dashArray: "5, 5"
+            dashArray: "8, 8"
           })
         });
         // 将图层添加到图层控制器中
@@ -291,10 +292,10 @@ function addVecWFSLayers() {
           // 这里可以根据需要定义样式
           style: feature => ({
             color: "#FFA500", // 设置边框为橙色
-            weight: 2, // 默认线宽
+            weight: 4, // 默认线宽
             fillColor: feature.properties.fillColor || "#000000",
             fillOpacity: 0, // 设置填充透明
-            dashArray: "5, 5"
+            dashArray: "8, 8"
           })
         });
         // 将图层添加到图层控制器中
@@ -366,7 +367,7 @@ function addVecWFSLayers() {
         console.error("Error fetching the WFS data: ", error);
       });
     const china_river_level3_url =
-      "http://localhost:8080/geoserver/chuanzang/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=chuanzang%3AChinaRiver_level3&outputFormat=application%2Fjson";
+      "http://localhost:8080/geoserver/chuanzang/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=chuanzang%3Ariver_level3&outputFormat=application%2Fjson";
     fetch(china_river_level3_url)
       .then(response => response.json())
       .then(data => {
@@ -464,13 +465,18 @@ const insarDetection = () => {
   insarDetectVisible.value = true;
 };
 
+const susceptibleDetection = () => {
+  console.log("滑坡易发性评估");
+  addDynamicWMSLayer("predict_result", "JinS_susceptible_10m");
+};
+
 const multiDetectVisible = ref(false);
 const multiDetection = () => {
   multiDetectVisible.value = true;
 };
 
 function addDynamicWMSLayer(workspace, layerName) {
-  console.log("栅格数据加载");
+  // console.log("栅格数据加载");
   const fullLayerName = `${workspace}:${layerName}`;
   const newLayer = L.tileLayer.wms("http://localhost:8080/geoserver/wms", {
     layers: fullLayerName, // 使用动态获取的工作空间和图层名称
@@ -485,7 +491,7 @@ function addDynamicWMSLayer(workspace, layerName) {
 <style scoped>
 .map-wrapper {
   position: relative;
-  height: 94.6vh;
+  height: 95vh;
 }
 
 .map-container {
@@ -496,9 +502,9 @@ function addDynamicWMSLayer(workspace, layerName) {
   position: absolute;
   top: 2vh;
   right: 50vh;
-  left: 63vh;
+  left: 50vh;
   z-index: 500;
-  height: 40px;
+  height: 50px;
 }
 
 .status-bar {

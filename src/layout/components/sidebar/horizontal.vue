@@ -89,6 +89,11 @@ nextTick(() => {
 </template>
 
 <style lang="scss" scoped>
+.horizontal-header-menu {
+  .el-menu-item {
+    font-size: 20px; // 修改文字大小
+  }
+}
 :deep(.el-loading-mask) {
   opacity: 0.45;
 }

@@ -49,7 +49,10 @@
       <el-menu-item index="4-2" @click="InsarDetection()"
         >InSAR灾害检测</el-menu-item
       >
-      <el-menu-item index="4-3" @click="MultiDetection()"
+      <el-menu-item index="4-3" @click="SusceptibleDetection()"
+        >滑坡易发性评估</el-menu-item
+      >
+      <el-menu-item index="4-4" @click="MultiDetection()"
         >多源遥感综合检测</el-menu-item
       >
     </el-sub-menu>
@@ -92,9 +95,22 @@ const OpticalDetection = () => {
 const InsarDetection = () => {
   emit("insar-detection");
 };
+const SusceptibleDetection = () => {
+  emit("susceptible-detection");
+};
 const MultiDetection = () => {
   emit("multi-detection");
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.el-sub-menu__title) {
+  font-size: 18px;
+}
+:deep(.el-sub-menu) {
+  background-color: #545c64; // 修改为所需的背景颜色
+}
+:deep(.el-menu-item) {
+  color: #fff;
+}
+</style>
