@@ -25,7 +25,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="InSAR形变">
+        <el-form-item label="InSAR形变检测">
           <el-select
             v-model="form.inputPath2.path"
             placeholder="请选择数据集路径"
@@ -40,7 +40,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="滑坡易发性">
+        <el-form-item label="地质灾害易发性">
           <el-select
             v-model="form.inputPath3.path"
             placeholder="请选择数据集路径"
@@ -56,9 +56,10 @@
           </el-select>
         </el-form-item>
         <el-form-item label="滑坡检测模型选择">
-          <el-radio v-model="radio1" size="large"
-            >滑坡灾害综合加权评估</el-radio
-          >
+          <el-radio-group v-model="radio1">
+            <el-radio :label="1" size="large">滑坡灾害综合加权评估</el-radio>
+            <el-radio :label="2" size="large">多源集成机器学习</el-radio>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="检测结果保存位置">
           <el-select

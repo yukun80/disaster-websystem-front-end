@@ -19,6 +19,11 @@
       @susceptible-detection="susceptibleDetection"
       @multi-detection="multiDetection"
     />
+    <!-- 引入侧边菜单 -->
+    <div class="side-menu-container">
+      <SideMenuComponent />
+    </div>
+    <!-- 引入标准化预处理操作面板 -->
     <Standardized v-model="standardVisible" />
     <OpticalDetection
       @load-result="addDynamicWMSLayer"
@@ -32,6 +37,7 @@
       @load-result="addDynamicWMSLayer"
       v-model="multiDetectVisible"
     />
+    <LegendComponent />
   </div>
 </template>
 
@@ -45,6 +51,8 @@ import Standardized from "./Standardized.vue";
 import OpticalDetection from "./OpticalDetection.vue";
 import InsarDetection from "./InsarDetection.vue";
 import MultiDetection from "./MultiDetection.vue";
+import LegendComponent from "./LegendComponent.vue";
+import SideMenuComponent from "./SideMenuComponent.vue";
 
 const map = ref(null);
 const layerControl = ref(null); // 图层控制器的引用
@@ -424,6 +432,124 @@ function addVecWFSLayers() {
   }
 }
 
+const cz_ALOS_Dem = ref(null);
+function addDemWMSLayers() {
+  if (isDemWMSAdded.value) {
+    console.log("cz_dem_added");
+    const cz_ALOS_DemLayer = L.tileLayer.wms(
+      "http://localhost:8080/geoserver/wms",
+      {
+        layers: "cztif:cz_ALOS_DEM_12m",
+        format: "image/png",
+        transparent: true,
+        version: "1.3.0"
+      }
+    );
+    cz_ALOS_Dem.value = cz_ALOS_DemLayer;
+    layerControl.value.addOverlay(cz_ALOS_DemLayer, "ALOS_DEM_12m");
+    layersWithRaster.value.push({
+      name: "ALOS_DEM_12m"
+    });
+  } else {
+    layerControl.value.removeLayer(cz_ALOS_Dem.value);
+    map.value.removeLayer(cz_ALOS_Dem.value);
+    cz_ALOS_Dem.value = null;
+  }
+}
+
+const cz_insar = ref(null);
+const JinS_insar = ref(null);
+function addInSARLayers() {
+  if (isInsarWMSAdded.value) {
+    // InSAR形变结果 GeoServer WMS 服务的 URL
+    const insar_clip_26 = L.tileLayer.wms(
+      "http://localhost:8080/geoserver/wms",
+      {
+        layers: "cztif:insar_clip_26",
+        format: "image/png",
+        transparent: true,
+        version: "1.3.0"
+      }
+    );
+    const insar_clip_128 = L.tileLayer.wms(
+      "http://localhost:8080/geoserver/wms",
+      {
+        layers: "cztif:insar_clip_128",
+        format: "image/png",
+        transparent: true,
+        version: "1.3.0"
+      }
+    );
+    const insar_clip_172 = L.tileLayer.wms(
+      "http://localhost:8080/geoserver/wms",
+      {
+        layers: "cztif:insar_clip_172",
+        format: "image/png",
+        transparent: true,
+        version: "1.3.0"
+      }
+    );
+    const insar_clip_99 = L.tileLayer.wms(
+      "http://localhost:8080/geoserver/wms",
+      {
+        layers: "cztif:insar_clip_99",
+        format: "image/png",
+        transparent: true,
+        version: "1.3.0"
+      }
+    );
+    const insar_clip_70 = L.tileLayer.wms(
+      "http://localhost:8080/geoserver/wms",
+      {
+        layers: "cztif:insar_clip_70",
+        format: "image/png",
+        transparent: true,
+        version: "1.3.0"
+      }
+    );
+    // 金沙江2023insar速率
+    const insar_JinS_vel = L.tileLayer.wms(
+      "http://localhost:8080/geoserver/wms",
+      {
+        layers: "	cztif:SBAS_99_JinS",
+        format: "image/png",
+        transparent: true,
+        version: "1.3.0"
+      }
+    );
+
+    // 将两个图层组合为一个图层组
+    const combinedInSAR = L.layerGroup([
+      insar_clip_26,
+      insar_clip_128,
+      insar_clip_172,
+      insar_clip_99,
+      insar_clip_70
+    ]);
+    cz_insar.value = combinedInSAR;
+    JinS_insar.value = insar_JinS_vel;
+    // 将图层组添加到图层控制器中
+    layerControl.value.addOverlay(combinedInSAR, "insar:CZ形变速率_2023");
+    layersWithRaster.value.push({
+      name: "2023_CZ平均形变速率"
+    });
+
+    // 将金沙江形变添加到图层控制器中
+    layerControl.value.addOverlay(insar_JinS_vel, "insar:金沙江形变速率_2023");
+    layersWithRaster.value.push({
+      name: "2023_金沙江平均形变速率"
+    });
+  } else {
+    layerControl.value.removeLayer(cz_insar.value);
+    map.value.removeLayer(cz_insar.value);
+    cz_insar.value = null;
+
+    layerControl.value.removeLayer(JinS_insar.value);
+    map.value.removeLayer(JinS_insar.value);
+    JinS_insar.value = null;
+  }
+}
+
 async function addPredictResult(workspace = "predict_result") {
   try {
     console.log("加载完整工作区栅格");
@@ -490,21 +616,33 @@ function addDynamicWMSLayer(workspace, layerName) {
 
 <style scoped>
 .map-wrapper {
-  position: relative;
+  display: flex;
+  /* position: relative; */
   height: 95vh;
 }
 
 .map-container {
-  height: calc(100%);
+  flex-grow: 1;
+  /* height: calc(100%); */
+  height: 100%;
 }
 
-.el-menu-demo {
+.menu-horizontal {
   position: absolute;
   top: 2vh;
   right: 50vh;
   left: 50vh;
   z-index: 500;
   height: 50px;
+}
+/* 添加到index.vue的<style scoped>中 */
+.side-menu-container {
+  position: absolute;
+  top: 0; /* 与顶部对齐 */
+  left: 0; /* 与左侧对齐 */
+  bottom: 0; /* 与底部对齐，确保填充高度 */
+  z-index: 1000; /* 确保菜单在地图上方显示 */
+  overflow-y: auto; /* 添加滚动条以适应内容 */
 }
 
 .status-bar {

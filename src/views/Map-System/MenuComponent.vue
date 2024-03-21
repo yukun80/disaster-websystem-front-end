@@ -1,7 +1,7 @@
 <template>
   <el-menu
     :default-active="activeIndex"
-    class="el-menu-demo"
+    class="menu-horizontal"
     mode="horizontal"
     background-color="#545c64"
     text-color="#fff"
@@ -47,7 +47,7 @@
         >光学遥感检测</el-menu-item
       >
       <el-menu-item index="4-2" @click="InsarDetection()"
-        >InSAR灾害检测</el-menu-item
+        >InSAR地质灾害检测</el-menu-item
       >
       <el-menu-item index="4-3" @click="SusceptibleDetection()"
         >滑坡易发性评估</el-menu-item

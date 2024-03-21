@@ -6,11 +6,11 @@
     style="color: #000; background-color: #f0f2f5"
   >
     <template #header>
-      <h3>InSAR滑坡检测</h3>
+      <h3>InSAR地质灾害检测</h3>
     </template>
     <template #default>
       <el-form :model="form" label-width="30%" label-position="left">
-        <el-form-item label="InSAR切片数据集">
+        <el-form-item label="InSAR数据集">
           <el-select
             v-model="form.outputPath1.path"
             placeholder="请选择数据集路径"
