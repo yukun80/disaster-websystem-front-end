@@ -19,25 +19,33 @@
       @susceptible-detection="susceptibleDetection"
       @multi-detection="multiDetection"
     />
-    <!-- 引入侧边菜单 -->
-    <div class="side-menu-container">
-      <SideMenuComponent />
-    </div>
     <!-- 引入标准化预处理操作面板 -->
     <Standardized v-model="standardVisible" />
+    <!-- 引入光学检测操作面板 -->
     <OpticalDetection
       @load-result="addDynamicWMSLayer"
       v-model="opticalDetectVisible"
     />
+    <!-- 引入INSAR检测操作面板 -->
     <InsarDetection
       @load-result="addDynamicWMSLayer"
       v-model="insarDetectVisible"
     />
+    <!-- 引入综合检测操作面板 -->
     <MultiDetection
       @load-result="addDynamicWMSLayer"
       v-model="multiDetectVisible"
     />
-    <LegendComponent />
+    <!-- 引入状态栏菜单 -->
+    <BarMenu
+      @legend-view="toggleLegendVisibility"
+      @quantify-view="toggleQuantify"
+    />
+    <QuantifyAnalysis
+      @quantify-close="toggleQuantify"
+      v-model="quantifyVisible"
+    />
+    <LegendComponent v-if="isLegendVisible" />
   </div>
 </template>
 
@@ -51,8 +59,9 @@ import Standardized from "./Standardized.vue";
 import OpticalDetection from "./OpticalDetection.vue";
 import InsarDetection from "./InsarDetection.vue";
 import MultiDetection from "./MultiDetection.vue";
+import BarMenu from "./BarMenu.vue";
+import QuantifyAnalysis from "./QuantifyAnalysis.vue";
 import LegendComponent from "./LegendComponent.vue";
-import SideMenuComponent from "./SideMenuComponent.vue";
 
 const map = ref(null);
 const layerControl = ref(null); // 图层控制器的引用
@@ -92,7 +101,7 @@ function initMap() {
   L.control
     .scale({
       position: "bottomright", // 比例尺显示在右下角
-      maxWidth: 100, // 最大宽度
+      maxWidth: 120, // 最大宽度
       metric: true, // 使用公制单位
       imperial: false // 不使用英制单位
     })
@@ -612,13 +621,23 @@ function addDynamicWMSLayer(workspace, layerName) {
   });
   layerControl.value.addOverlay(newLayer, layerName);
 }
+
+const quantifyVisible = ref(false);
+const toggleQuantify = () => {
+  quantifyVisible.value = !quantifyVisible.value;
+};
+
+const isLegendVisible = ref(false);
+const toggleLegendVisibility = () => {
+  isLegendVisible.value = !isLegendVisible.value;
+};
 </script>
 
 <style scoped>
 .map-wrapper {
   display: flex;
   /* position: relative; */
-  height: 95vh;
+  height: 94.5vh;
 }
 
 .map-container {
@@ -630,19 +649,18 @@ function addDynamicWMSLayer(workspace, layerName) {
 .menu-horizontal {
   position: absolute;
   top: 2vh;
-  right: 50vh;
-  left: 50vh;
+  right: 55vh;
+  left: 60vh;
   z-index: 500;
   height: 50px;
 }
-/* 添加到index.vue的<style scoped>中 */
-.side-menu-container {
+.bar-menu {
   position: absolute;
-  top: 0; /* 与顶部对齐 */
-  left: 0; /* 与左侧对齐 */
-  bottom: 0; /* 与底部对齐，确保填充高度 */
-  z-index: 1000; /* 确保菜单在地图上方显示 */
-  overflow-y: auto; /* 添加滚动条以适应内容 */
+  bottom: 0;
+  left: 0;
+  height: 4vh;
+  z-index: 500;
+  width: 100%;
 }
 
 .status-bar {
@@ -654,9 +672,9 @@ function addDynamicWMSLayer(workspace, layerName) {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  height: 3vh; /* 或根据需要调整高度 */
-  padding: 2px;
-  font-size: 15px;
+  height: 4vh; /* 或根据需要调整高度 */
+  /* padding: 2px; */
+  font-size: 18px;
   color: white;
   background-color: rgb(0 0 0 / 70%); /* 半透明黑色背景 */
   backdrop-filter: blur(5px);
@@ -674,5 +692,17 @@ function addDynamicWMSLayer(workspace, layerName) {
   display: flex;
   align-items: center;
   text-align: left;
+}
+:deep(.leaflet-control-scale) {
+  bottom: 0;
+  background-color: #fff;
+  border: 1px solid #000;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #000;
+  margin: 5px;
+  z-index: 500;
 }
 </style>

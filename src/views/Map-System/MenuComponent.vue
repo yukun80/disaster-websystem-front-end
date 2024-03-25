@@ -61,11 +61,6 @@
       <el-menu-item index="5-1">光学样本数据集</el-menu-item>
       <el-menu-item index="5-2">InSAR样本数据集</el-menu-item>
     </el-sub-menu>
-    <el-sub-menu index="6">
-      <template #title> 定量分析 </template>
-      <el-menu-item index="6-1">混淆矩阵计算</el-menu-item>
-      <el-menu-item index="6-2">定量评估</el-menu-item>
-    </el-sub-menu>
   </el-menu>
 </template>
 
@@ -80,7 +75,11 @@ const emit = defineEmits([
   // "load-sample",
   // "calculate-tool",
   // "toggle-property-sheet",
-  "standard-preprocess"
+  "standard-preprocess",
+  "optical-detection",
+  "insar-detection",
+  "susceptible-detection",
+  "multi-detection"
 ]);
 
 const addLayerToMap = dataType => {
