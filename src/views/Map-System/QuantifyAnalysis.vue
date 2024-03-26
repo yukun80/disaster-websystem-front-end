@@ -132,7 +132,7 @@ const option_quanify = {
         综合模型早期识别: 72.99
       },
       {
-        product: "FalseAlarm",
+        product: "FRD",
         光学模型早期识别: 43.33,
         InSAR模型形变异常识别: 52.67,
         综合模型早期识别: 37.33

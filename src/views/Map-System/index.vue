@@ -38,14 +38,21 @@
     />
     <!-- 引入状态栏菜单 -->
     <BarMenu
+      @location-statistics="toggleAttributeVisibility"
       @legend-view="toggleLegendVisibility"
       @quantify-view="toggleQuantify"
+      @system-log="toggleLogVisibility"
+    />
+    <AttributePanel
+      @attribution-close="toggleAttributeVisibility"
+      v-model="isAttributeVisible"
     />
     <QuantifyAnalysis
       @quantify-close="toggleQuantify"
       v-model="quantifyVisible"
     />
     <LegendComponent v-if="isLegendVisible" />
+    <LogPanel @close-Log="toggleLogVisibility" v-if="isLogVisible" />
   </div>
 </template>
 
@@ -62,6 +69,8 @@ import MultiDetection from "./MultiDetection.vue";
 import BarMenu from "./BarMenu.vue";
 import QuantifyAnalysis from "./QuantifyAnalysis.vue";
 import LegendComponent from "./LegendComponent.vue";
+import LogPanel from "./LogPanel.vue";
+import AttributePanel from "./AttributePanel.vue";
 
 const map = ref(null);
 const layerControl = ref(null); // 图层控制器的引用
@@ -622,6 +631,11 @@ function addDynamicWMSLayer(workspace, layerName) {
   layerControl.value.addOverlay(newLayer, layerName);
 }
 
+const isAttributeVisible = ref(false);
+const toggleAttributeVisibility = () => {
+  isAttributeVisible.value = !isAttributeVisible.value;
+};
+
 const quantifyVisible = ref(false);
 const toggleQuantify = () => {
   quantifyVisible.value = !quantifyVisible.value;
@@ -630,6 +644,10 @@ const toggleQuantify = () => {
 const isLegendVisible = ref(false);
 const toggleLegendVisibility = () => {
   isLegendVisible.value = !isLegendVisible.value;
+};
+const isLogVisible = ref(false);
+const toggleLogVisibility = () => {
+  isLogVisible.value = !isLogVisible.value;
 };
 </script>
 

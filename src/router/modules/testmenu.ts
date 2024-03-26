@@ -10,7 +10,8 @@ export default {
       name: "Fighting",
       component: () => import("@/views/testmenu/index.vue"),
       meta: {
-        title: "testmenu"
+        title: "testmenu",
+        showLink: false
       }
     }
   ]

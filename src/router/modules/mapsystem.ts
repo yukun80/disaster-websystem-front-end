@@ -4,7 +4,8 @@ export default {
   redirect: "/mapsystem/mapview",
   meta: {
     icon: "mdi:earth",
-    title: "地图主页"
+    title: "地图主页",
+    showLink: false
   },
   children: [
     {
