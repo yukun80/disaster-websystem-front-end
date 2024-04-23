@@ -4,11 +4,12 @@
       v-show="isPanelVisible"
       class="log-panel"
       style="
-        width: 100%;
-        height: 25%;
+        /* width: 100%; */
+        left: 30%;
+        right: 25%;
+        height: 30%;
         position: fixed;
         bottom: 4vh;
-        right: 0;
         margin: 0;
         color: #000; /* 设置文字颜色 */
         background-color: #f0f2f5; /* 设置背景颜色 */
@@ -47,25 +48,30 @@
       <p v-for="log in logs" :key="log.id" class="text item">
         {{ log.message }}
       </p>
+      <!-- 进度条 -->
+      <!-- <el-progress :percentage="logProgress" /> -->
       <template #footer>日志数量: {{ logs.length }}</template>
     </el-card>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, inject } from "vue";
 
+const eventBus = inject("eventBus");
+const logs = eventBus.logs;
+// const addLog = eventBus.addLog;
 const emit = defineEmits(["close-Log"]);
-
 const closePanel = () => {
   emit("close-Log", false); // 通知父组件更改可见性
 };
+// addLog("正在进行InSAR地表形变异常检测");
 
-const logs = ref([
-  { id: 1, message: "日志消息 1" },
-  { id: 2, message: "日志消息 2" },
-  { id: 3, message: "日志消息 3" }
-  // 更多日志...
-]);
+// const logs = ref([
+//   { id: 1, message: "日志消息 1" },
+//   { id: 2, message: "日志消息 2" },
+//   { id: 3, message: "日志消息 3" }
+//   // 更多日志...
+// ]);
 const isPanelVisible = ref(true);
 </script>

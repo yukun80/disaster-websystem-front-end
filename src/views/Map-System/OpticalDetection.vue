@@ -64,8 +64,8 @@
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
-import { ElMessageBox } from "element-plus";
+import { reactive, ref, inject, h } from "vue";
+import { ElMessageBox, ElNotification, ElProgress } from "element-plus";
 import axios from "axios";
 
 const emit = defineEmits(["load-result"]);
@@ -112,7 +112,9 @@ const onOutputPathChange = async outIndex => {
 
 fetchOutputPaths(1, "/default"); // 初始化输出路径
 fetchOutputPaths(2, "/default"); // 初始化输出路径
-
+// 全局日志信息传递
+const eventBus = inject("eventBus");
+const addLog = eventBus.addLog;
 const confirmClick = async () => {
   const tiles_folder = form.outputFullPath1; // 预处理后的影像文件夹
   const res_folder = form.outputFullPath2; // 结果输出文件夹
@@ -120,16 +122,20 @@ const confirmClick = async () => {
   console.log(tiles_folder);
   console.log(res_folder);
   console.log(result_name.value);
+  addLog("执行光学遥感地质灾害检测模型;");
   try {
+    notification1();
     const response = await axios.post(`http://localhost:5000/predict_images`, {
       tiles_folder,
       res_folder,
       res_name
     });
     console.log(response.data); // 检测成功后的回应
+    notification2(); // 通知用户检测成功
     // 可以在这里添加更多的UI反馈，比如成功消息提示
   } catch (error) {
     console.error("Detecting error:", error);
+    notification3(); // 通知用户检测失败
   }
   ElMessageBox.confirm(`是否将检测结果加载到当前地图`, {
     confirmButtonText: "确定",
@@ -147,5 +153,42 @@ const confirmClick = async () => {
     .catch(() => {
       console.log("cancel");
     });
+};
+// 自定义通知，包含进度条
+const notification1Instance = ref(null); // 用来存储第一个通知的引用
+const notification1 = () => {
+  notification1Instance.value = ElNotification({
+    title: "光学遥感检测工具",
+    message: h("div", [
+      "正在进行光学遥感检测，请稍后",
+      h(ElProgress, {
+        percentage: 100,
+        status: "info",
+        indeterminate: true
+      })
+    ]),
+    duration: 0, // 设置为0则不会自动关闭
+    type: "info",
+    onClose: () => {
+      notification1Instance.value = null; // 清除引用当通知关闭时
+    }
+  });
+};
+const notification2 = () => {
+  if (notification1Instance.value) {
+    notification1Instance.value.close(); // 如果第一个通知仍在显示，则关闭它
+  }
+  ElNotification({
+    title: "光学遥感检测工具",
+    message: "运行成功！",
+    type: "success"
+  });
+};
+const notification3 = () => {
+  ElNotification({
+    title: "光学遥感检测工具",
+    message: "运行失败！",
+    type: "error"
+  });
 };
 </script>

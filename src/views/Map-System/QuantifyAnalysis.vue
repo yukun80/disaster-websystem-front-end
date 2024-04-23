@@ -1,7 +1,7 @@
 <template>
   <el-drawer
     :direction="direction"
-    :size="'35%'"
+    :size="'30%'"
     style="color: #000; background-color: #f0f2f5"
   >
     <template #header>
@@ -113,23 +113,23 @@ const option_quanify = {
       "综合模型早期识别"
     ],
     source: [
-      {
-        product: "Precision",
-        光学模型早期识别: 79.17,
-        InSAR模型形变异常识别: 42.27,
-        综合模型早期识别: 82.17
-      },
+      // {
+      //   product: "Precision",
+      //   光学模型早期识别: 79.17,
+      //   InSAR模型形变异常识别: 42.27,
+      //   综合模型早期识别: 82.17
+      // },
       {
         product: "Recall",
-        光学模型早期识别: 65.64,
-        InSAR模型形变异常识别: 70.19,
+        光学模型早期识别: 81.77,
+        InSAR模型形变异常识别: 75.19,
         综合模型早期识别: 82.18
       },
       {
-        product: "F1-Score",
-        光学模型早期识别: 71.77,
-        InSAR模型形变异常识别: 52.77,
-        综合模型早期识别: 72.99
+        product: "IoU",
+        光学模型早期识别: 62.06,
+        InSAR模型形变异常识别: 35.84,
+        综合模型早期识别: 65.47
       },
       {
         product: "FRD",

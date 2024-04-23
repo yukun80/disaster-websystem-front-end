@@ -67,11 +67,7 @@
 <script setup>
 import { reactive, ref } from "vue";
 import axios from "axios";
-
-// 直接调用 defineProps 接收父组件传递的参数
-// defineProps({
-//   standardVisible: Boolean
-// });
+import { ElNotification } from "element-plus";
 
 const direction = ref("rtl");
 const form = reactive({
@@ -147,12 +143,36 @@ const confirmClick = async () => {
   console.log(file_paths);
   console.log(output_folder);
   try {
+    notification1();
     const response = await axios.get(`http://localhost:5000/process_images`, {
       params: { file_paths, output_folder }
     });
     console.log(response.data); // 处理成功后的回应
+    notification2();
   } catch (error) {
     console.error("Processing error:", error);
+    notification3();
   }
+};
+const notification1 = () => {
+  ElNotification({
+    title: "数据标准化工具",
+    message: "正在进行数据标准化处理，请稍后",
+    type: "info"
+  });
+};
+const notification2 = () => {
+  ElNotification({
+    title: "数据标准化工具",
+    message: "运行成功！",
+    type: "success"
+  });
+};
+const notification3 = () => {
+  ElNotification({
+    title: "数据标准化工具",
+    message: "运行失败！",
+    type: "error"
+  });
 };
 </script>

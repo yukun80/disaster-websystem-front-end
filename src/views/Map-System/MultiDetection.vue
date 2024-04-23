@@ -97,8 +97,8 @@
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
-import { ElMessageBox } from "element-plus";
+import { reactive, ref, inject, h } from "vue";
+import { ElMessageBox, ElNotification, ElProgress } from "element-plus";
 import axios from "axios";
 
 const emit = defineEmits(["load-result"]);
@@ -211,7 +211,9 @@ fetchInputPaths(1, "/default");
 fetchInputPaths(2, "/default");
 fetchInputPaths(3, "/default");
 fetchOutputPaths("/default");
-
+// 全局日志信息传递
+const eventBus = inject("eventBus");
+const addLog = eventBus.addLog;
 const confirmClick = async () => {
   const optical_file = form.inputFullPath1; // 光学遥感检测结果文件
   const insar_file = form.inputFullPath2; // InSAR形变灾害检测结果文件
@@ -221,7 +223,9 @@ const confirmClick = async () => {
   console.log(landslide_file);
   console.log(res_folder);
   console.log(result_name.value);
+  addLog("执行集成机器学习模型综合检测;");
   try {
+    notification1();
     const response = await axios.post(
       `http://localhost:5000/predict_multiResult`,
       {
@@ -234,8 +238,10 @@ const confirmClick = async () => {
     );
     console.log(response.data); // 检测成功后的回应
     // 可以在这里添加更多的UI反馈，比如成功消息提示
+    notification2();
   } catch (error) {
     console.error("Detecting error:", error);
+    notification3();
   }
   ElMessageBox.confirm(`是否将检测结果加载到当前地图`, {
     confirmButtonText: "确定",
@@ -253,5 +259,42 @@ const confirmClick = async () => {
     .catch(() => {
       console.log("cancel");
     });
+};
+// 自定义通知，包含进度条
+const notification1Instance = ref(null); // 用来存储第一个通知的引用
+const notification1 = () => {
+  notification1Instance.value = ElNotification({
+    title: "集成机器学习模型",
+    message: h("div", [
+      "正在进行集成机器学习模型综合检测，请稍后",
+      h(ElProgress, {
+        percentage: 100,
+        status: "info",
+        indeterminate: true
+      })
+    ]),
+    duration: 0, // 设置为0则不会自动关闭
+    type: "info",
+    onClose: () => {
+      notification1Instance.value = null; // 清除引用当通知关闭时
+    }
+  });
+};
+const notification2 = () => {
+  if (notification1Instance.value) {
+    notification1Instance.value.close(); // 如果第一个通知仍在显示，则关闭它
+  }
+  ElNotification({
+    title: "集成机器学习模型",
+    message: "运行成功！",
+    type: "success"
+  });
+};
+const notification3 = () => {
+  ElNotification({
+    title: "集成机器学习模型",
+    message: "运行失败！",
+    type: "error"
+  });
 };
 </script>

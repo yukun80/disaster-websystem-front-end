@@ -45,7 +45,8 @@
     />
     <AttributePanel
       @attribution-close="toggleAttributeVisibility"
-      v-model="isAttributeVisible"
+      v-if="isAttributeVisible"
+      :layers="layersWithAttributes"
     />
     <QuantifyAnalysis
       @quantify-close="toggleQuantify"
@@ -57,7 +58,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, provide } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
@@ -71,6 +72,8 @@ import QuantifyAnalysis from "./QuantifyAnalysis.vue";
 import LegendComponent from "./LegendComponent.vue";
 import LogPanel from "./LogPanel.vue";
 import AttributePanel from "./AttributePanel.vue";
+
+import { useEventBus } from "../../utils/eventBus";
 
 const map = ref(null);
 const layerControl = ref(null); // 图层控制器的引用
@@ -93,6 +96,8 @@ const baseLayers = ref({
     }
   )
 });
+const { addLog, logs } = useEventBus();
+provide("eventBus", { addLog, logs });
 onMounted(() => {
   initMap();
   addVecWFSLayers();
@@ -128,6 +133,7 @@ function initMap() {
 }
 
 const layersWithRaster = ref([]); // 这是存储图层信息的数组
+const layersWithAttributes = ref([]); // 存储具有属性的图层信息的数组
 // 创建弹窗
 const createPopup = (properties, latlng) => {
   // 生成弹窗内容
@@ -270,10 +276,6 @@ function addVecWFSLayers() {
         railway.value = geoJsonLayer;
         geoJsonLayer.addTo(map.value);
         layerControl.value.addOverlay(geoJsonLayer, "川藏铁路线");
-        layersWithAttributes.push({
-          name: "川藏铁路线",
-          attributes: data.features.map(f => f.properties)
-        });
       })
       .catch(error => {
         console.error("Error fetching the WFS data: ", error);
@@ -299,10 +301,6 @@ function addVecWFSLayers() {
         cz_railway_buffer5.value = geoJsonLayer;
         geoJsonLayer.addTo(map.value);
         layerControl.value.addOverlay(geoJsonLayer, "川藏线5km缓冲区");
-        layersWithAttributes.push({
-          name: "川藏线5km缓冲区",
-          attributes: data.features.map(f => f.properties)
-        });
       })
       .catch(error => {
         console.error("Error fetching the WFS data: ", error);
@@ -357,7 +355,7 @@ function addVecWFSLayers() {
         // 将图层添加到图层控制器中
         cz_fault.value = geoJsonLayer;
         layerControl.value.addOverlay(geoJsonLayer, "中国断裂带分布");
-        layersWithAttributes.push({
+        layersWithAttributes.value.push({
           name: "中国断裂带分布",
           attributes: data.features.map(f => f.properties)
         });
@@ -384,7 +382,7 @@ function addVecWFSLayers() {
         // 将图层添加到图层控制器中
         cz_reservoir.value = geoJsonLayer;
         layerControl.value.addOverlay(geoJsonLayer, "中国水库数据集");
-        layersWithAttributes.push({
+        layersWithAttributes.value.push({
           name: "中国水库数据集",
           attributes: data.features.map(f => f.properties)
         });
@@ -416,7 +414,7 @@ function addVecWFSLayers() {
         china_river_level3.value = geoJsonLayer;
         geoJsonLayer.addTo(map.value);
         layerControl.value.addOverlay(geoJsonLayer, "中国三级以上河流");
-        layersWithAttributes.push({
+        layersWithAttributes.value.push({
           name: "中国河流数据集",
           attributes: data.features.map(f => f.properties)
         });

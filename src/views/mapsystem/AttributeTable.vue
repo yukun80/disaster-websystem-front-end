@@ -46,10 +46,6 @@ export default {
   name: "AttributeTable",
   props: {
     layers: Array // An array of layers to choose from
-    // attributes: {
-    //     type: Object,
-    //     required: true
-    // }
   },
   data() {
     return {
@@ -71,12 +67,6 @@ export default {
       }
     }
   }
-  // mounted() {
-  //     if (this.layers.length > 0) {
-  //         this.selectedLayer = this.layers[0].name;
-  //         this.updateAttributes();
-  //     }
-  // }
 };
 </script>
 
@@ -84,14 +74,8 @@ export default {
 /* 表头元素样式 */
 .header {
   display: flex;
-
-  /* This will align the children in a row */
   align-items: center;
-
-  /* This will vertically center the children */
   justify-content: space-between;
-
-  /* This will put space between the children */
   border-bottom: 2px solid #ddd;
 }
 
@@ -105,44 +89,20 @@ export default {
   display: flex;
   justify-content: flex-end;
   width: 120px;
-
-  /* padding: 5px; */
-
-  /* border-radius: 3px; */
-
-  /* background-color: rgba(44, 62, 80, 0.0); */
 }
 
 .attribute-table {
-  /* 确保子元素在水平方向上拉伸以填满容器宽度 */
   position: absolute;
-
-  /* 设置为屏幕宽度的25% */
   right: 30%;
-
-  /* 右边距离 */
   bottom: 3.3dvh;
-
-  /* 设置最大高度为屏幕高度的30% */
   left: 30%;
   z-index: 500;
-
-  /* Add styles for the attribute table */
   display: flex;
   flex-direction: column;
-
-  /* 设置子元素垂直排列 */
   align-items: stretch;
-
-  /* 当内容超出时显示滚动条 */
   max-height: 30vh;
   padding: 5px;
-
-  /* 绝对定位 */
   overflow-y: auto;
-
-  /* 底部对齐 */
-
   background-color: rgb(44 62 80 / 70%);
   border-radius: 3px;
 }
@@ -156,14 +116,10 @@ export default {
 .attribute-table td {
   padding: 8px;
   font-size: 12px;
-
-  /* 设置文字颜色 */
   color: #fcfbf1d7;
   text-align: min-width;
   border-bottom: 1px solid #ddd;
 }
-
-/* 将No data available.的颜色设置为白色 */
 .attribute-table div {
   padding: 4px;
   margin: 1px;
