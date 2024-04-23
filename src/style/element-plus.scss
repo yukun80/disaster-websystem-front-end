@@ -169,3 +169,9 @@
     box-shadow: 0 -1px 0 0 #e0e3e8, 0 -3px 6px 0 rgb(69 98 155 / 12%);
   }
 }
+
+.el-menu-item {
+  margin-top: 10px;
+  margin-bottom: 10px; // 调整为所需的间距
+  font-size: 20px;
+}

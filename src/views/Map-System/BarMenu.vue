@@ -54,6 +54,6 @@ const addSystemLog = () => {
 
 <style lang="scss" scoped>
 :deep(.el-menu-item span) {
-  font-size: 20px; /* 设置文字大小为20px */
+  font-size: 24px; /* 设置文字大小为20px */
 }
 </style>

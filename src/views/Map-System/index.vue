@@ -661,18 +661,21 @@ const toggleLogVisibility = () => {
   /* height: calc(100%); */
   height: 100%;
 }
-
 .menu-horizontal {
   position: absolute;
+  display: inline-flex;
   top: 2vh;
-  right: 55vh;
-  left: 60vh;
-  z-index: 500;
+  left: 50%; /* 设置为视窗宽度的一半 */
   height: 50px;
+  transform: translateX(-50%); /* 向左偏移自身宽度的50%，实现居中 */
+  z-index: 500;
+  max-width: 100%;
+  padding-right: 0px; /* 或者根据实际情况调整右侧内边距 */
 }
+
 .bar-menu {
   position: absolute;
-  bottom: 0;
+  bottom: 3pt;
   left: 0;
   height: 4vh;
   z-index: 500;
@@ -688,7 +691,7 @@ const toggleLogVisibility = () => {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  height: 4vh; /* 或根据需要调整高度 */
+  height: 5vh; /* 或根据需要调整高度 */
   /* padding: 2px; */
   font-size: 18px;
   color: white;
@@ -698,9 +701,13 @@ const toggleLogVisibility = () => {
 
 /* Scoped styles with deep selector to target layer control items */
 :deep(.leaflet-control-layers-selector) {
-  text-align: center;
-
-  /* Aligns text to the left */
+  text-align: center; /* Aligns text to the left */
+  font-size: 20px; /* 设置文字大小 */
+}
+:deep(.leaflet-control-layers-toggle) {
+  width: 70px;
+  height: 50px;
+  background-size: 3em;
 }
 
 /* Fix for the layer labels if needed */
@@ -708,9 +715,11 @@ const toggleLogVisibility = () => {
   display: flex;
   align-items: center;
   text-align: left;
+  font-size: 20px; /* 设置文字大小 */
+  padding: 5px; /* 设置内边距 */
 }
 :deep(.leaflet-control-scale) {
-  bottom: 0;
+  bottom: 3pt;
   background-color: #fff;
   border: 1px solid #000;
   border-radius: 5px;
