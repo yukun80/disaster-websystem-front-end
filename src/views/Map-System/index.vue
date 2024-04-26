@@ -53,6 +53,7 @@
       v-model="quantifyVisible"
     />
     <LegendComponent v-if="isLegendVisible" />
+    <LegendComponent_Res v-if="isLegendVisible" />
     <LogPanel @close-Log="toggleLogVisibility" v-if="isLogVisible" />
   </div>
 </template>
@@ -70,6 +71,7 @@ import MultiDetection from "./MultiDetection.vue";
 import BarMenu from "./BarMenu.vue";
 import QuantifyAnalysis from "./QuantifyAnalysis.vue";
 import LegendComponent from "./LegendComponent.vue";
+import LegendComponent_Res from "./LegendComponent_Res.vue";
 import LogPanel from "./LogPanel.vue";
 import AttributePanel from "./AttributePanel.vue";
 
@@ -77,7 +79,7 @@ import { useEventBus } from "../../utils/eventBus";
 
 const map = ref(null);
 const layerControl = ref(null); // 图层控制器的引用
-const currentZoom = ref(9); // 默认缩放级别，根据需要调整
+const currentZoom = ref(10); // 默认缩放级别，根据需要调整
 const currentPosition = ref({ lat: 0, lng: 0 });
 const baseLayers = ref({
   OSM: L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -104,7 +106,7 @@ onMounted(() => {
 });
 function initMap() {
   map.value = L.map("map", {
-    center: [30.586377, 98.85313], // Adjust the center as needed
+    center: [30.73, 98.85313], // Adjust the center as needed
     zoom: currentZoom.value,
     layers: [baseLayers.value.Satellite], // Default layer
     zoomControl: false, // This will hide the zoom control
@@ -190,16 +192,16 @@ function addOpticalWMSLayers() {
     const cz_s2_band234Layer = L.tileLayer.wms(
       "http://localhost:8080/geoserver/wms",
       {
-        layers: "cztif:cz_S2_band234_",
+        layers: "cztif:CZ_RGB_10m",
         format: "image/png",
         transparent: true,
         version: "1.3.0"
       }
     );
     cz_s2_band234.value = cz_s2_band234Layer;
-    layerControl.value.addOverlay(cz_s2_band234Layer, "S-2:Band 2,3,4");
+    layerControl.value.addOverlay(cz_s2_band234Layer, "Sentinel-2-RGB");
     layersWithRaster.value.push({
-      name: "S-2:Band 2,3,4"
+      name: "Sentinel-2-RGB"
     });
   } else {
     layerControl.value.removeLayer(cz_s2_band234.value);
@@ -255,7 +257,7 @@ function addVecWFSLayers() {
           style: {
             color: "#000000", // 黑色
             weight: 6, // 与白色底层相同的宽度
-            ineCap: "square", // 方形线帽
+            lineCap: "square", // 方形线帽
             opacity: 1 // 不透明
           }
         });
@@ -263,7 +265,7 @@ function addVecWFSLayers() {
           style: {
             color: "#FFFFFF", // 白色
             weight: 5, // 与铁轨线相同的宽度
-            dashArray: "10, 10", // 虚线模式
+            dashArray: "5, 20", // 虚线模式
             lineCap: "square", // 方形线帽
             opacity: 1 // 不透明
           }
@@ -294,7 +296,8 @@ function addVecWFSLayers() {
             weight: 4, // 默认线宽
             fillColor: feature.properties.fillColor || "#000000",
             fillOpacity: 0, // 设置填充透明
-            dashArray: "8, 8"
+            dashArray: "8, 8",
+            lineCap: "square"
           })
         });
         // 将图层添加到图层控制器中
@@ -319,7 +322,8 @@ function addVecWFSLayers() {
             weight: 4, // 默认线宽
             fillColor: feature.properties.fillColor || "#000000",
             fillOpacity: 0, // 设置填充透明
-            dashArray: "8, 8"
+            dashArray: "8, 8",
+            lineCap: "square"
           })
         });
         // 将图层添加到图层控制器中

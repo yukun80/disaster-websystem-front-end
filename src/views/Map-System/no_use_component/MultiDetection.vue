@@ -9,13 +9,8 @@
       <h3>多源遥感综合检测</h3>
     </template>
     <template #default>
-      <el-form
-        :model="form"
-        label-width="40%"
-        label-position="left"
-        size="large"
-      >
-        <el-form-item label="多维致灾因子综合遥感数据">
+      <el-form :model="form" label-width="30%" label-position="left">
+        <el-form-item label="光学遥感检测">
           <el-select
             v-model="form.inputPath1.path"
             placeholder="请选择数据集路径"
@@ -24,6 +19,36 @@
           >
             <el-option
               v-for="item in form.inputPath1.paths"
+              :key="item.name"
+              :label="item.name"
+              :value="item.name"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="InSAR形变检测">
+          <el-select
+            v-model="form.inputPath2.path"
+            placeholder="请选择数据集路径"
+            style="width: 250px"
+            @change="() => onInputPathChange(2)"
+          >
+            <el-option
+              v-for="item in form.inputPath2.paths"
+              :key="item.name"
+              :label="item.name"
+              :value="item.name"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="地质灾害易发性">
+          <el-select
+            v-model="form.inputPath3.path"
+            placeholder="请选择数据集路径"
+            style="width: 250px"
+            @change="() => onInputPathChange(3)"
+          >
+            <el-option
+              v-for="item in form.inputPath3.paths"
               :key="item.name"
               :label="item.name"
               :value="item.name"
@@ -84,6 +109,11 @@ const radio1 = ref("1");
 const form = reactive({
   inputPath1: { path: "", paths: [] },
   inputFullPath1: "/default",
+  inputPath2: { path: "", paths: [] },
+  inputFullPath2: "/default",
+  inputPath3: { path: "", paths: [] },
+  inputFullPath3: "/default",
+
   outputPath2: { path: "", paths: [] },
   outputFullPath2: "/default", // 初始化输出路径2的完整路径
   dataCheckStatus: null
@@ -95,6 +125,10 @@ const fetchInputPaths = async (inIndex, dir) => {
   let inputPath = "";
   if (inIndex === 1) {
     inputPath = "inputPath1";
+  } else if (inIndex === 2) {
+    inputPath = "inputPath2";
+  } else {
+    inputPath = "inputPath3";
   }
   try {
     const response = await axios.get(
@@ -103,6 +137,10 @@ const fetchInputPaths = async (inIndex, dir) => {
     form[inputPath].paths = response.data;
     if (inIndex === 1) {
       form.inputFullPath1 = dir;
+    } else if (inIndex === 2) {
+      form.inputFullPath2 = dir;
+    } else {
+      form.inputFullPath3 = dir;
     }
   } catch (error) {
     console.error("There was an error!", error);
@@ -130,16 +168,30 @@ const onInputPathChange = async inIndex => {
   if (inIndex === 1) {
     selectedPath = form.inputPath1.path;
     selected = form.inputPath1.paths.find(path => path.name === selectedPath);
+  } else if (inIndex === 2) {
+    selectedPath = form.inputPath2.path;
+    selected = form.inputPath2.paths.find(path => path.name === selectedPath);
+  } else {
+    selectedPath = form.inputPath3.path;
+    selected = form.inputPath3.paths.find(path => path.name === selectedPath);
   }
   if (selected && selected.isDir) {
     let newPath = "";
     if (inIndex === 1) {
       newPath = `${form.inputFullPath1}/${selectedPath}`;
+    } else if (inIndex === 2) {
+      newPath = `${form.inputFullPath2}/${selectedPath}`;
+    } else {
+      newPath = `${form.inputFullPath3}/${selectedPath}`;
     }
     await fetchInputPaths(inIndex, newPath);
   } else {
     if (inIndex === 1) {
       form.inputFullPath1 = `${form.inputFullPath1}/${selectedPath}`;
+    } else if (inIndex === 2) {
+      form.inputFullPath2 = `${form.inputFullPath2}/${selectedPath}`;
+    } else {
+      form.inputFullPath3 = `${form.inputFullPath3}/${selectedPath}`;
     }
   }
 };
@@ -156,19 +208,19 @@ const onOutputPathChange = async () => {
 };
 
 fetchInputPaths(1, "/default");
-// fetchInputPaths(2, "/default");
-// fetchInputPaths(3, "/default");
+fetchInputPaths(2, "/default");
+fetchInputPaths(3, "/default");
 fetchOutputPaths("/default");
 // 全局日志信息传递
 const eventBus = inject("eventBus");
 const addLog = eventBus.addLog;
 const confirmClick = async () => {
   const optical_file = form.inputFullPath1; // 光学遥感检测结果文件
-  // const insar_file = form.inputFullPath2; // InSAR形变灾害检测结果文件
-  // const landslide_file = form.inputFullPath3; // 滑坡易发性评估结果文件
+  const insar_file = form.inputFullPath2; // InSAR形变灾害检测结果文件
+  const landslide_file = form.inputFullPath3; // 滑坡易发性评估结果文件
   const res_folder = form.outputFullPath2; // 结果输出文件夹
   const res_name = result_name.value; // 结果文件名
-  console.log(optical_file);
+  console.log(landslide_file);
   console.log(res_folder);
   console.log(result_name.value);
   addLog("执行集成机器学习模型综合检测;");
@@ -178,8 +230,8 @@ const confirmClick = async () => {
       `http://localhost:5000/predict_multiResult`,
       {
         optical_file,
-        // insar_file,
-        // landslide_file,
+        insar_file,
+        landslide_file,
         res_folder,
         res_name
       }
