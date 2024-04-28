@@ -195,7 +195,8 @@ const cancelClick = () => {
   form.outputFullPath2 = "/default";
   form.type = null;
   form.name = "";
-
+  fetchPaths("/default"); // 初始化输出路径
+  fetchOutputPaths("/default"); // 初始化输出路径
   // 重置GeoJSON URL
   geojson_url.value = "";
   emit("tif2shp-close");

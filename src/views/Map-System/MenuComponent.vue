@@ -67,10 +67,10 @@
     </el-sub-menu>
     <el-sub-menu index="5">
       <template #title>
-        <el-icon><MessageBox /></el-icon> 样本管理
+        <el-icon><MessageBox /></el-icon> 数据管理
       </template>
-      <el-menu-item index="5-1">光学样本数据集</el-menu-item>
-      <el-menu-item index="5-2">InSAR样本数据集</el-menu-item>
+      <el-menu-item index="5-1" @click="addDataPanel()">添加数据</el-menu-item>
+      <el-menu-item index="5-2">删除数据</el-menu-item>
     </el-sub-menu>
   </el-menu>
 </template>
@@ -82,6 +82,7 @@ const activeIndex = ref("1");
 
 // 定义可以发出的事件
 const emit = defineEmits([
+  "data-add",
   "load-data",
   "tif2shp-calculation",
   "standard-preprocess",
@@ -90,7 +91,9 @@ const emit = defineEmits([
   "susceptible-detection",
   "multi-detection"
 ]);
-
+const addDataPanel = () => {
+  emit("data-add");
+};
 const addLayerToMap = dataType => {
   emit("load-data", dataType);
 };

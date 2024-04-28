@@ -220,6 +220,10 @@ const cancelClick = async () => {
   form.dataCheckStatus = null;
   // 清空结果文件名
   result_name.value = "";
+  fetchInputPaths(1, "/default");
+  // fetchInputPaths(2, "/default");
+  // fetchInputPaths(3, "/default");
+  fetchOutputPaths("/default");
   // 当用户点击取消按钮时，隐藏抽屉
   emit("multiDetect-close");
 };

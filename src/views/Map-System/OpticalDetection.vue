@@ -167,7 +167,8 @@ const cancelClick = () => {
 
   // 清空结果文件名
   result_name.value = "";
-
+  fetchOutputPaths(1, "/default"); // 初始化输出路径
+  fetchOutputPaths(2, "/default"); // 初始化输出路径
   // 发出 'optical-close' 事件来关闭视图/对话框
   emit("optical-close");
 };

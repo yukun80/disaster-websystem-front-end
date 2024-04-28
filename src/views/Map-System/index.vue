@@ -8,6 +8,7 @@
     </div>
     <!-- 引入菜单组件 -->
     <MenuComponent
+      @data-add="DataAddPanelopen"
       @load-data="handleDataLoad"
       @tif2shp-calculation="Tif2ShpCalculate"
       @standard-preprocess="multiBandStandardized"
@@ -15,6 +16,11 @@
       @insar-detection="insarDetection"
       @susceptible-detection="susceptibleDetection"
       @multi-detection="multiDetection"
+    />
+    <DataAddPanel
+      @AddDataPanel-close="toggleDataAddVisibility"
+      @load-data="addSelectData2Map"
+      v-model="DataAddPanelVisible"
     />
     <!-- 引入INSAR检测操作面板 -->
     <CalTif2Shp
@@ -73,6 +79,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import MenuComponent from "./MenuComponent.vue";
+import DataAddPanel from "./DataAddPanel.vue";
 import CalTif2Shp from "./CalTif2Shp.vue";
 import Standardized from "./Standardized.vue";
 import OpticalDetection from "./OpticalDetection.vue";
@@ -605,7 +612,23 @@ async function addPredictResult(workspace = "predict_result") {
     console.error("Error fetching layers:", error);
   }
 }
-
+// 数据加载面板
+const DataAddPanelVisible = ref(false);
+const DataAddPanelopen = () => {
+  DataAddPanelVisible.value = true;
+};
+const toggleDataAddVisibility = () => {
+  DataAddPanelVisible.value = false;
+};
+function addSelectData2Map(layerClass, finalWorkSpace, layerName, geojson_url) {
+  if (layerClass === "coverage") {
+    addDynamicWMSLayer(finalWorkSpace, layerName);
+  } else if (layerClass === "featureType") {
+    addDynamicWFSLayer(layerName, geojson_url);
+  }
+  DataAddPanelVisible.value = false;
+}
+// 栅格转矢量面板
 const Tif2ShpCalculateVisible = ref(false);
 const Tif2ShpCalculate = () => {
   Tif2ShpCalculateVisible.value = true;
@@ -614,6 +637,7 @@ const toggleTif2ShpVisibility = () => {
   Tif2ShpCalculateVisible.value = false;
 };
 
+// 数据标准化面板
 const standardVisible = ref(false);
 const multiBandStandardized = () => {
   standardVisible.value = true;
@@ -621,7 +645,7 @@ const multiBandStandardized = () => {
 const toggleStandardVisibility = () => {
   standardVisible.value = false;
 };
-
+// 光学遥感检测面板
 const opticalDetectVisible = ref(false);
 const opticalDetection = () => {
   opticalDetectVisible.value = true;
@@ -629,7 +653,7 @@ const opticalDetection = () => {
 const toggleOpticalVisibility = () => {
   opticalDetectVisible.value = false;
 };
-
+// insar检测面板
 const insarDetectVisible = ref(false);
 const insarDetection = () => {
   insarDetectVisible.value = true;
@@ -697,7 +721,12 @@ function addDynamicWFSLayer(res_name_no_ext, geojson_url) {
       // 使用 GeoJSON 数据创建一个图层
       // 使用这个函数作为 style 选项
       const geoJsonLayer = L.geoJSON(data, {
-        style: styleFeature
+        style: styleFeature,
+        onEachFeature: (feature, layer) => {
+          layer.on("click", e => {
+            createPopup(feature.properties, e.latlng);
+          });
+        }
       });
       // 将图层添加到图层控制器中
       cz_reservoir.value = geoJsonLayer;
@@ -812,5 +841,8 @@ const toggleLogVisibility = () => {
   color: #000;
   margin: 5px;
   z-index: 500;
+}
+:deep(.leaflet-popup-content) {
+  font-size: 18px; /* 设置所有弹窗的文字大小为14像素 */
 }
 </style>

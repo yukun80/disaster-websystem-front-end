@@ -169,6 +169,8 @@ const cancelClick = async () => {
   form.outputFullPath1 = "/default";
   // 重置数据检查状态
   form.dataCheckStatus = null;
+  fetchPaths(0, "/default"); // 初始化输入路径
+  fetchOutputPaths("/default"); // 初始化输出路径
   emit("standardized-close");
 };
 const notification1 = () => {
