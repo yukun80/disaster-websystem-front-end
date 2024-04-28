@@ -210,6 +210,16 @@ const confirmClick = async () => {
     });
 };
 const cancelClick = async () => {
+  // 重置输入路径变量
+  form.inputPath1 = { path: "", paths: [] };
+  form.inputFullPath1 = "/default";
+  // 重置输出路径变量
+  form.outputPath2 = { path: "", paths: [] };
+  form.outputFullPath2 = "/default";
+  // 重置数据检查状态
+  form.dataCheckStatus = null;
+  // 清空结果文件名
+  result_name.value = "";
   // 当用户点击取消按钮时，隐藏抽屉
   emit("multiDetect-close");
 };

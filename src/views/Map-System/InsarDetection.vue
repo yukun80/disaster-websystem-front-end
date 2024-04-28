@@ -160,7 +160,19 @@ const confirmClick = async () => {
     });
 };
 const cancelClick = () => {
-  // 当用户点击取消按钮时，隐藏抽屉
+  // 重置输出路径变量
+  form.outputPath1 = { path: "", paths: [] };
+  form.outputFullPath1 = "/default";
+  form.outputPath2 = { path: "", paths: [] };
+  form.outputFullPath2 = "/default";
+
+  // 重置数据检查状态
+  form.dataCheckStatus = null;
+
+  // 清空结果文件名
+  result_name.value = "";
+
+  // 发出 'insar-close' 事件，这通常会在组件外触发清理动作或关闭对话框
   emit("insar-close");
 };
 // 自定义通知，包含进度条

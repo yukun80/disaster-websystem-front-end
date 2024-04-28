@@ -159,6 +159,16 @@ const confirmClick = async () => {
   }
 };
 const cancelClick = async () => {
+  // 重置输入路径数组
+  form.inputPaths = [{ path: "", paths: [] }];
+  // 重置输入路径的完整路径数组
+  form.inputFullPath = [];
+  // 重置输出路径对象
+  form.outputPath1 = { path: "", paths: [] };
+  // 重置输出路径的完整路径
+  form.outputFullPath1 = "/default";
+  // 重置数据检查状态
+  form.dataCheckStatus = null;
   emit("standardized-close");
 };
 const notification1 = () => {

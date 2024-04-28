@@ -156,6 +156,19 @@ const confirmClick = async () => {
     });
 };
 const cancelClick = () => {
+  // 重置输出路径相关变量
+  form.outputPath1 = { path: "", paths: [] };
+  form.outputFullPath1 = "/default";
+  form.outputPath2 = { path: "", paths: [] };
+  form.outputFullPath2 = "/default";
+
+  // 重置数据检查状态变量
+  form.dataCheckStatus = null;
+
+  // 清空结果文件名
+  result_name.value = "";
+
+  // 发出 'optical-close' 事件来关闭视图/对话框
   emit("optical-close");
 };
 // 自定义通知，包含进度条
