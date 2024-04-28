@@ -76,6 +76,7 @@ import { reactive, ref, inject, h } from "vue";
 import { ElMessageBox, ElNotification, ElProgress } from "element-plus";
 import axios from "axios";
 
+const multiDetectVisible = ref(false); // 初始状态可以是 true 或 false，根据需求设定
 const emit = defineEmits(["load-result"]);
 
 const direction = ref("rtl");
@@ -208,13 +209,17 @@ const confirmClick = async () => {
       console.log("cancel");
     });
 };
+const cancelClick = async () => {
+  // 当用户点击取消按钮时，隐藏抽屉
+  emit("multiDetect-close");
+};
 // 自定义通知，包含进度条
 const notification1Instance = ref(null); // 用来存储第一个通知的引用
 const notification1 = () => {
   notification1Instance.value = ElNotification({
     title: "集成机器学习模型",
     message: h("div", [
-      "正在进行集成机器学习模型综合检测，请稍后",
+      "正在进行集成机器学习模型综合检测，请稍候",
       h(ElProgress, {
         percentage: 100,
         status: "info",
@@ -235,13 +240,18 @@ const notification2 = () => {
   ElNotification({
     title: "集成机器学习模型",
     message: "运行成功！",
+    uration: 0, // 设置为0则不会自动关闭
     type: "success"
   });
 };
 const notification3 = () => {
+  if (notification1Instance.value) {
+    notification1Instance.value.close(); // 如果第一个通知仍在显示，则关闭它
+  }
   ElNotification({
     title: "集成机器学习模型",
     message: "运行失败！",
+    uration: 0, // 设置为0则不会自动关闭
     type: "error"
   });
 };

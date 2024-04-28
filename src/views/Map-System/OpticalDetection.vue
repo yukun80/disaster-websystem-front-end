@@ -68,7 +68,8 @@ import { reactive, ref, inject, h } from "vue";
 import { ElMessageBox, ElNotification, ElProgress } from "element-plus";
 import axios from "axios";
 
-const emit = defineEmits(["load-result"]);
+const opticalDetectVisible = ref(false);
+const emit = defineEmits(["load-result", "optical-close"]);
 
 const direction = ref("rtl");
 const radio1 = ref("1");
@@ -154,13 +155,16 @@ const confirmClick = async () => {
       console.log("cancel");
     });
 };
+const cancelClick = () => {
+  emit("optical-close");
+};
 // 自定义通知，包含进度条
 const notification1Instance = ref(null); // 用来存储第一个通知的引用
 const notification1 = () => {
   notification1Instance.value = ElNotification({
     title: "光学遥感检测工具",
     message: h("div", [
-      "正在进行光学遥感检测，请稍后",
+      "正在进行光学遥感检测，请稍候",
       h(ElProgress, {
         percentage: 100,
         status: "info",
@@ -181,13 +185,18 @@ const notification2 = () => {
   ElNotification({
     title: "光学遥感检测工具",
     message: "运行成功！",
+    duration: 0, // 设置为0则不会自动关闭
     type: "success"
   });
 };
 const notification3 = () => {
+  if (notification1Instance.value) {
+    notification1Instance.value.close(); // 如果第一个通知仍在显示，则关闭它
+  }
   ElNotification({
     title: "光学遥感检测工具",
     message: "运行失败！",
+    duration: 0, // 设置为0则不会自动关闭
     type: "error"
   });
 };

@@ -9,31 +9,40 @@
     <!-- 引入菜单组件 -->
     <MenuComponent
       @load-data="handleDataLoad"
-      @load-sample="handleSampleLoad"
-      @calculate-tool="calculate"
-      @run-model="runDisasterModel"
-      :layers="layersWithRaster"
+      @tif2shp-calculation="Tif2ShpCalculate"
       @standard-preprocess="multiBandStandardized"
       @optical-detection="opticalDetection"
       @insar-detection="insarDetection"
       @susceptible-detection="susceptibleDetection"
       @multi-detection="multiDetection"
     />
+    <!-- 引入INSAR检测操作面板 -->
+    <CalTif2Shp
+      v-model="Tif2ShpCalculateVisible"
+      @tif2shp-close="toggleTif2ShpVisibility"
+      @load-result="addDynamicWFSLayer"
+    />
     <!-- 引入标准化预处理操作面板 -->
-    <Standardized v-model="standardVisible" />
+    <Standardized
+      @standard-close="toggleStandardVisibility"
+      v-model="standardVisible"
+    />
     <!-- 引入光学检测操作面板 -->
     <OpticalDetection
       @load-result="addDynamicWMSLayer"
+      @optical-close="toggleOpticalVisibility"
       v-model="opticalDetectVisible"
     />
     <!-- 引入INSAR检测操作面板 -->
     <InsarDetection
       @load-result="addDynamicWMSLayer"
+      @insar-close="toggleInsarVisibility"
       v-model="insarDetectVisible"
     />
     <!-- 引入综合检测操作面板 -->
     <MultiDetection
       @load-result="addDynamicWMSLayer"
+      @multiDetect-close="toggleMultiDetectVisibility"
       v-model="multiDetectVisible"
     />
     <!-- 引入状态栏菜单 -->
@@ -64,6 +73,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import MenuComponent from "./MenuComponent.vue";
+import CalTif2Shp from "./CalTif2Shp.vue";
 import Standardized from "./Standardized.vue";
 import OpticalDetection from "./OpticalDetection.vue";
 import InsarDetection from "./InsarDetection.vue";
@@ -596,19 +606,36 @@ async function addPredictResult(workspace = "predict_result") {
   }
 }
 
+const Tif2ShpCalculateVisible = ref(false);
+const Tif2ShpCalculate = () => {
+  Tif2ShpCalculateVisible.value = true;
+};
+const toggleTif2ShpVisibility = () => {
+  Tif2ShpCalculateVisible.value = false;
+};
+
 const standardVisible = ref(false);
 const multiBandStandardized = () => {
   standardVisible.value = true;
+};
+const toggleStandardVisibility = () => {
+  standardVisible.value = false;
 };
 
 const opticalDetectVisible = ref(false);
 const opticalDetection = () => {
   opticalDetectVisible.value = true;
 };
+const toggleOpticalVisibility = () => {
+  opticalDetectVisible.value = false;
+};
 
 const insarDetectVisible = ref(false);
 const insarDetection = () => {
   insarDetectVisible.value = true;
+};
+const toggleInsarVisibility = () => {
+  insarDetectVisible.value = false;
 };
 
 const susceptibleDetection = () => {
@@ -619,6 +646,9 @@ const susceptibleDetection = () => {
 const multiDetectVisible = ref(false);
 const multiDetection = () => {
   multiDetectVisible.value = true;
+};
+const toggleMultiDetectVisibility = () => {
+  multiDetectVisible.value = false;
 };
 
 function addDynamicWMSLayer(workspace, layerName) {
@@ -631,6 +661,55 @@ function addDynamicWMSLayer(workspace, layerName) {
     version: "1.3.0"
   });
   layerControl.value.addOverlay(newLayer, layerName);
+}
+function getRandomColor() {
+  const letters = "0123456789ABCDEF";
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+// function styleFeature() {
+//   const randomColor = getRandomColor(); // 为当前特征生成随机颜色
+//   return {
+//     color: randomColor, // 设置边框颜色
+//     weight: 2, // 默认线宽
+//     fillColor: randomColor, // 设置填充颜色
+//     fillOpacity: 0.1 // 设置填充透明度
+//   };
+// }
+function addDynamicWFSLayer(res_name_no_ext, geojson_url) {
+  // 为整个图层生成一个随机颜色
+  const layerColor = getRandomColor();
+  function styleFeature() {
+    return {
+      color: layerColor, // 使用统一的边框颜色
+      weight: 3, // 默认线宽
+      fillColor: layerColor, // 使用统一的填充颜色
+      fillOpacity: 0.1 // 设置填充透明度
+    };
+  }
+  // 矢量结果 GeoServer WFS 服务的 URL
+  fetch(geojson_url)
+    .then(response => response.json())
+    .then(data => {
+      // 使用 GeoJSON 数据创建一个图层
+      // 使用这个函数作为 style 选项
+      const geoJsonLayer = L.geoJSON(data, {
+        style: styleFeature
+      });
+      // 将图层添加到图层控制器中
+      cz_reservoir.value = geoJsonLayer;
+      layerControl.value.addOverlay(geoJsonLayer, res_name_no_ext);
+      layersWithAttributes.value.push({
+        name: res_name_no_ext,
+        attributes: data.features.map(f => f.properties)
+      });
+    })
+    .catch(error => {
+      console.error("Error fetching the WFS data: ", error);
+    });
 }
 
 const isAttributeVisible = ref(false);

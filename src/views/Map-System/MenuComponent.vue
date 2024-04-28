@@ -35,10 +35,10 @@
       <template #title>
         <el-icon><Promotion /></el-icon> 计算工具
       </template>
-      <el-menu-item index="2-1">坡度计算</el-menu-item>
-      <el-menu-item index="2-2">坡向计算</el-menu-item>
+      <!-- <el-menu-item index="2-1">坡度计算</el-menu-item>
+      <el-menu-item index="2-2">坡向计算</el-menu-item> -->
       <el-menu-item index="2-3">矢量转栅格</el-menu-item>
-      <el-menu-item index="2-4">栅格转矢量</el-menu-item>
+      <el-menu-item index="2-4" @click="Tif2Shp()">栅格转矢量</el-menu-item>
     </el-sub-menu>
     <el-sub-menu index="3">
       <template #title>
@@ -83,9 +83,7 @@ const activeIndex = ref("1");
 // 定义可以发出的事件
 const emit = defineEmits([
   "load-data",
-  // "load-sample",
-  // "calculate-tool",
-  // "toggle-property-sheet",
+  "tif2shp-calculation",
   "standard-preprocess",
   "optical-detection",
   "insar-detection",
@@ -95,6 +93,9 @@ const emit = defineEmits([
 
 const addLayerToMap = dataType => {
   emit("load-data", dataType);
+};
+const Tif2Shp = () => {
+  emit("tif2shp-calculation");
 };
 const Standardized = () => {
   emit("standard-preprocess");

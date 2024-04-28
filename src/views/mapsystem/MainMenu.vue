@@ -268,13 +268,7 @@ export default {
   components: {
     ArrowDown // 确保在此注册 ArrowDown 组件
   },
-  emits: [
-    "load-data",
-    "load-sample",
-    "calculate-tool",
-    "run-model",
-    "show-property-sheet"
-  ],
+  emits: ["load-data", "load-sample", "calculate-tool", "show-property-sheet"],
   setup() {
     const optical = ref(false);
     const direction = ref("rtl");

@@ -1,6 +1,6 @@
 <template>
   <div class="legend">
-    <h4>地灾识别结果图例</h4>
+    <h4>地灾早期识别结果图例</h4>
     <div>
       <span class="level1"></span>
       <span>无风险区域</span>

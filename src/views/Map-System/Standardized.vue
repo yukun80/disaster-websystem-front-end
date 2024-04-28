@@ -65,10 +65,11 @@
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, inject, h } from "vue";
 import axios from "axios";
-import { ElNotification } from "element-plus";
+import { ElNotification, ElProgress } from "element-plus";
 
+const standardVisible = ref("false");
 const direction = ref("rtl");
 const form = reactive({
   inputPaths: [{ path: "", paths: [] }],
@@ -136,12 +137,15 @@ const onOutputPathChange = () => {
 };
 fetchPaths(0, "/default"); // 初始化输入路径
 fetchOutputPaths("/default"); // 初始化输出路径
-
+// 全局日志信息传递
+const eventBus = inject("eventBus");
+const addLog = eventBus.addLog;
 const confirmClick = async () => {
   const file_paths = form.inputFullPath.join(",");
   const output_folder = form.outputFullPath1;
   console.log(file_paths);
   console.log(output_folder);
+  addLog("执行标准化数据处理;");
   try {
     notification1();
     const response = await axios.get(`http://localhost:5000/process_images`, {
@@ -154,24 +158,46 @@ const confirmClick = async () => {
     notification3();
   }
 };
+const cancelClick = async () => {
+  emit("standardized-close");
+};
 const notification1 = () => {
-  ElNotification({
+  notification1Instance.value = ElNotification({
     title: "数据标准化工具",
-    message: "正在进行数据标准化处理，请稍后",
-    type: "info"
+    message: h("div", [
+      "正在进行数据标准化处理，请稍候",
+      h(ElProgress, {
+        percentage: 100,
+        status: "info",
+        indeterminate: true
+      })
+    ]),
+    duration: 0, // 设置为0则不会自动关闭
+    type: "info",
+    onClose: () => {
+      notification1Instance.value = null; // 清除引用当通知关闭时
+    }
   });
 };
 const notification2 = () => {
+  if (notification1Instance.value) {
+    notification1Instance.value.close(); // 如果第一个通知仍在显示，则关闭它
+  }
   ElNotification({
     title: "数据标准化工具",
     message: "运行成功！",
+    duration: 0, // 设置为0则不会自动关闭
     type: "success"
   });
 };
 const notification3 = () => {
+  if (notification1Instance.value) {
+    notification1Instance.value.close(); // 如果第一个通知仍在显示，则关闭它
+  }
   ElNotification({
     title: "数据标准化工具",
     message: "运行失败！",
+    duration: 0, // 设置为0则不会自动关闭
     type: "error"
   });
 };
