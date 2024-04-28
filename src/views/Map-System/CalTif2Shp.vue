@@ -188,6 +188,16 @@ const confirmClick = async () => {
     });
 };
 const cancelClick = () => {
+  // 重置表单变量
+  form.inputPaths = { path: "", paths: [] };
+  form.inputFullPath = "/default";
+  form.outputPath2 = { path: "", paths: [] };
+  form.outputFullPath2 = "/default";
+  form.type = null;
+  form.name = "";
+
+  // 重置GeoJSON URL
+  geojson_url.value = "";
   emit("tif2shp-close");
 };
 
