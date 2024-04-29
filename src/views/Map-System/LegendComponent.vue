@@ -36,7 +36,7 @@
   background: white;
   border-radius: 5px;
   box-shadow: 0 0 10px rgb(0 0 0 / 50%);
-  min-width: 170px;
+  min-width: 180px;
 }
 
 .legend h4 {

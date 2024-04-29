@@ -70,7 +70,9 @@
         <el-icon><MessageBox /></el-icon> 数据管理
       </template>
       <el-menu-item index="5-1" @click="addDataPanel()">添加数据</el-menu-item>
-      <el-menu-item index="5-2">删除数据</el-menu-item>
+      <el-menu-item index="5-2" @click="deleteDataPanel()"
+        >删除数据</el-menu-item
+      >
     </el-sub-menu>
   </el-menu>
 </template>
@@ -83,6 +85,7 @@ const activeIndex = ref("1");
 // 定义可以发出的事件
 const emit = defineEmits([
   "data-add",
+  "data-delete",
   "load-data",
   "tif2shp-calculation",
   "standard-preprocess",
@@ -93,6 +96,9 @@ const emit = defineEmits([
 ]);
 const addDataPanel = () => {
   emit("data-add");
+};
+const deleteDataPanel = () => {
+  emit("data-delete");
 };
 const addLayerToMap = dataType => {
   emit("load-data", dataType);

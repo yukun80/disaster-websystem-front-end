@@ -9,6 +9,7 @@
     <!-- 引入菜单组件 -->
     <MenuComponent
       @data-add="DataAddPanelopen"
+      @data-delete="DataDeletePanelopen"
       @load-data="handleDataLoad"
       @tif2shp-calculation="Tif2ShpCalculate"
       @standard-preprocess="multiBandStandardized"
@@ -17,11 +18,19 @@
       @susceptible-detection="susceptibleDetection"
       @multi-detection="multiDetection"
     />
+    <!-- 引入数据加载面板 -->
     <DataAddPanel
       @AddDataPanel-close="toggleDataAddVisibility"
       @load-data="addSelectData2Map"
       v-model="DataAddPanelVisible"
     />
+    <!-- 引入数据删除面板 -->
+    <DataDeletePanel
+      @DeleteDataPanel-close="toggleDataDeleteVisibility"
+      @load-data="deleteSelectData"
+      v-model="DataDeletePanelVisible"
+    />
+
     <!-- 引入INSAR检测操作面板 -->
     <CalTif2Shp
       v-model="Tif2ShpCalculateVisible"
@@ -80,6 +89,7 @@ import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import MenuComponent from "./MenuComponent.vue";
 import DataAddPanel from "./DataAddPanel.vue";
+import DataDeletePanel from "./DataDeletePanel.vue";
 import CalTif2Shp from "./CalTif2Shp.vue";
 import Standardized from "./Standardized.vue";
 import OpticalDetection from "./OpticalDetection.vue";
@@ -628,6 +638,14 @@ function addSelectData2Map(layerClass, finalWorkSpace, layerName, geojson_url) {
   }
   DataAddPanelVisible.value = false;
 }
+// 数据删除面板
+const DataDeletePanelVisible = ref(false);
+const DataDeletePanelopen = () => {
+  DataDeletePanelVisible.value = true;
+};
+const toggleDataDeleteVisibility = () => {
+  DataDeletePanelVisible.value = false;
+};
 // 栅格转矢量面板
 const Tif2ShpCalculateVisible = ref(false);
 const Tif2ShpCalculate = () => {

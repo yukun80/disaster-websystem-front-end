@@ -1,7 +1,7 @@
 <template>
   <el-dialog
-    v-model="DataAddPanelVisible"
-    title="添加数据"
+    v-model="DataDeletePanelVisible"
+    title="删除数据"
     width="500"
     style="color: #000; background-color: #f0f2f5"
   >
@@ -28,7 +28,7 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="cancelClick">取消</el-button>
-        <el-button type="primary" @click="confirmClick"> 确定 </el-button>
+        <el-button type="danger" @click="confirmClick"> 删除 </el-button>
       </div>
     </template>
   </el-dialog>
@@ -38,8 +38,8 @@
 import { ref, watch } from "vue";
 import axios from "axios";
 
-const DataAddPanelVisible = ref(false);
-const emit = defineEmits(["AddDataPanel-close", "load-data"]);
+const DataDeletePanelVisible = ref(false);
+const emit = defineEmits(["DeleteDataPanel-close", "load-data"]);
 
 const formLabelWidth = "150px";
 
@@ -47,7 +47,6 @@ const workspaces = ref([]);
 const layers = ref([]);
 const selectedWorkspace = ref(null);
 const selectedLayer = ref(null);
-const shapefile_url = ref(null);
 
 // 获取工作区列表
 const fetchWorkspaces = async () => {
@@ -96,33 +95,33 @@ const workspaceChanged = newWorkspace => {
 const confirmClick = async () => {
   const finalWorkSpace = selectedWorkspace.value;
   const [layerName, layerClass] = selectedLayer.value;
-  if (layerClass === "featureType") {
-    try {
-      const response = await axios.get(
-        `http://localhost:5000/get_geojson?layer_name=${layerName}&workspace=${finalWorkSpace}`
-      );
-      shapefile_url.value = response.data.geojson_url;
-      console.log("geojson_url:", shapefile_url.value);
-      emit(
-        "load-data",
-        layerClass,
-        finalWorkSpace,
-        layerName,
-        shapefile_url.value
-      );
-    } catch (error) {
-      console.error("Error fetching geojson:", error);
+  try {
+    const response = await axios.post("http://localhost:5000/delete_data", {
+      layer_name: layerName,
+      workspace: finalWorkSpace,
+      layer_class: layerClass
+    });
+
+    if (response.status === 200) {
+      console.log("Success:", response.data);
+      // 这里可以添加更多的UI逻辑来通知用户操作成功
+      alert("Layer and store deleted successfully.");
+    } else {
+      console.error("Error:", response.data);
+      // 这里可以添加UI逻辑来处理不同的错误情况
+      alert("Failed to delete layer and store.");
     }
-  } else if (layerClass === "coverage") {
-    emit("load-data", layerClass, finalWorkSpace, layerName, null);
+  } catch (error) {
+    console.error("Error:", error);
+    // 处理网络错误或其他错误类型
+    alert("An error occurred while deleting the layer and store.");
   }
 };
 const cancelClick = () => {
-  // 重置表单变量
+  // 充值表单变量
   selectedWorkspace.value = null;
   selectedLayer.value = null;
-  shapefile_url.value = null;
-  // 关闭对话框
-  emit("AddDataPanel-close");
+  // 关闭弹窗
+  emit("DeleteDataPanel-close");
 };
 </script>
