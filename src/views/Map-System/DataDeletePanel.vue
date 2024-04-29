@@ -36,6 +36,7 @@
 
 <script setup>
 import { ref, watch } from "vue";
+import { ElNotification } from "element-plus";
 import axios from "axios";
 
 const DataDeletePanelVisible = ref(false);
@@ -105,11 +106,11 @@ const confirmClick = async () => {
     if (response.status === 200) {
       console.log("Success:", response.data);
       // 这里可以添加更多的UI逻辑来通知用户操作成功
-      alert("Layer and store deleted successfully.");
+      notification1();
     } else {
       console.error("Error:", response.data);
       // 这里可以添加UI逻辑来处理不同的错误情况
-      alert("Failed to delete layer and store.");
+      notification2();
     }
   } catch (error) {
     console.error("Error:", error);
@@ -123,5 +124,21 @@ const cancelClick = () => {
   selectedLayer.value = null;
   // 关闭弹窗
   emit("DeleteDataPanel-close");
+};
+const notification1 = () => {
+  ElNotification({
+    title: "数据删除",
+    message: "数据已完全删除",
+    duration: 0, // 设置为0则不会自动关闭
+    type: "success"
+  });
+};
+const notification2 = () => {
+  ElNotification({
+    title: "数据删除",
+    message: "删除失败，请检查是否有权限或正在使用",
+    duration: 0, // 设置为0则不会自动关闭
+    type: "error"
+  });
 };
 </script>

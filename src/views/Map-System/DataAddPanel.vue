@@ -37,6 +37,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import axios from "axios";
+import { ElNotification } from "element-plus";
 
 const DataAddPanelVisible = ref(false);
 const emit = defineEmits(["AddDataPanel-close", "load-data"]);
@@ -116,6 +117,7 @@ const confirmClick = async () => {
   } else if (layerClass === "coverage") {
     emit("load-data", layerClass, finalWorkSpace, layerName, null);
   }
+  notification1();
 };
 const cancelClick = () => {
   // 重置表单变量
@@ -124,5 +126,13 @@ const cancelClick = () => {
   shapefile_url.value = null;
   // 关闭对话框
   emit("AddDataPanel-close");
+};
+const notification1 = () => {
+  ElNotification({
+    title: "添加数据",
+    message: "数据加载成功",
+    duration: 0, // 设置为0则不会自动关闭
+    type: "success"
+  });
 };
 </script>
