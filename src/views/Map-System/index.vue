@@ -558,7 +558,7 @@ function addInSARLayers() {
     const insar_JinS_vel = L.tileLayer.wms(
       "http://localhost:8080/geoserver/wms",
       {
-        layers: "	cztif:SBAS_99_JinS",
+        layers: "cztif:JinS_vel_res",
         format: "image/png",
         transparent: true,
         version: "1.3.0"

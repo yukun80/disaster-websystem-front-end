@@ -80,7 +80,7 @@ const multiDetectVisible = ref(false); // 初始状态可以是 true 或 false�
 const emit = defineEmits(["load-result"]);
 
 const direction = ref("rtl");
-const radio1 = ref("1");
+const radio1 = ref(2);
 
 const form = reactive({
   inputPath1: { path: "", paths: [] },

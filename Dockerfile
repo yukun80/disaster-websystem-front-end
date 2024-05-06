@@ -1,20 +1,11 @@
-FROM node:16-alpine as build-stage
+# 使用 Nginx 官方镜像
+FROM nginx:stable-alpine
 
-WORKDIR /app
-RUN corepack enable
-RUN corepack prepare pnpm@7.32.1 --activate
+# 将 dist 目录下的文件复制到 Nginx 的 serve 目录
+COPY ./dist /usr/share/nginx/html
 
-RUN npm config set registry https://registry.npmmirror.com
-
-COPY .npmrc package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
-
-COPY . .
-RUN pnpm build
-
-FROM nginx:stable-alpine as production-stage
-
-COPY --from=build-stage /app/dist /usr/share/nginx/html
+# 暴露 80 端口
 EXPOSE 80
 
+# 启动时运行 Nginx
 CMD ["nginx", "-g", "daemon off;"]
